@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="RtlHardcoded,SmallSp">
+
+    <android.support.v7.widget.CardView
+        style="@style/CardViewStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="25dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/display.name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorEnd"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:font="bold"
+                tools:text="Ricky Minds" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/user.name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                tools:text="Ricky Minds" />
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/user.geo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#29B0D7"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:text="Istanbul,Türkiye" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/user.text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="2"
+                android:textColor="#414141"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="@string/lorem_ipsum" />
+
+            <com.twitter.sdk.android.tweetui.TweetView
+                android:id="@+id/tweet.view"
+                style="@style/tw__TweetLightStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tw__tweet_id="1" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        style="@style/CardViewStyleProfile"
+        android:layout_width="80dp"
+        android:layout_height="90dp">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/profile.image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/knife.action.view"
+        style="@style/CardViewStyleProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        app:cardBackgroundColor="@color/colorPrimaryDark">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_knife" />
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application -->
+    <color name="colorPrimary">#1dcaff</color>
+    <color name="colorPrimaryDark">#00aced</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- Knife-Background -->
+    <color name="colorStart">#23A4DB</color>
+    <color name="colorCenter">#5c35c6</color>
+    <color name="colorEnd">#42385D</color>
+</resources>

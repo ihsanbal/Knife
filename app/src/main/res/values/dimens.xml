@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="card_corner_radius">3dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+
+    <dimen name="card_corner_radius_profile">7dp</dimen>
+    <dimen name="card_elevation_profile">7dp</dimen>
+</resources>

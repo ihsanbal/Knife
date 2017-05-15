@@ -1,0 +1,25 @@
+machine:
+    environment:
+        ANDROID_HOME: /usr/local/android-sdk-linux
+        GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+        _JAVA_OPTIONS: "-Xms512m -Xmx2048m"
+    java:
+        version: oraclejdk8
+
+dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter tools,platform-tools,build-tools-25.0.1,android-25,extra-google-m2repository,extra-google-google_play_services,extra-android-support,extra-android-m2repository
+    - git log --pretty=format:'+ %s' -n 14 | grep -v "Merge\|release\|Update circle\|Update build" > change.log
+  override:
+    - source environmentSetup.sh && copyEnvVarsToGradleProperties
+    - ./gradlew dependencies --daemon
+
+test:
+  override:
+    - ./gradlew test
+
+deployment:
+   testing:
+      branch: [development, master]
+      commands:
+       - ./gradlew -Pcom.android.build.threadPoolSize=3 assembleRelease publishApkProductionRelease

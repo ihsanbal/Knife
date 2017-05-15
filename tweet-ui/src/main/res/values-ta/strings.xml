@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (C) 2015 Twitter, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tw__like_tweet">கீச்சை விரும்பு</string>
+    <string name="tw__liked_tweet">விரும்பியதை செயல்தவிர்</string>
+    <string name="tw__loading_tweet">ட்விட்டை ஏற்றுகிறது</string>
+    <string name="tw__pause">இடைநிறுத்து</string>
+    <string name="tw__play">இயக்கு</string>
+    <string name="tw__replay">மீண்டும் இயக்கு</string>
+    <string name="tw__retweeted_by_format">%1$s -ஆல் மறுட்விட் செய்யப்பட்டது</string>
+    <string name="tw__share_content_format">\@%1$s\ -இன் ட்விட்டைக் காணுங்கள்: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">%1$s (\@%2$s) -இடமிருந்து ட்விட்</string>
+    <string name="tw__share_tweet">ட்விட்டைப் பகிர்</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+    <string name="tw__tweet_media">கீச்சு ஊடகம்</string>
+</resources>

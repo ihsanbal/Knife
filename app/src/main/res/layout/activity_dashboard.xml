@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:ignore="RtlHardcoded,SmallSp,HardcodedText">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/banner.view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:srcCompat="@drawable/knife_bg" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/diagonal_line" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/profile.image"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_margin="14dp" />
+
+        </RelativeLayout>
+
+        <com.ihsanbal.knife.widget.KTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="7dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:text="@string/time_line"
+            android:textColor="#8effffff"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:font="bold"
+            tools:text="@string/time_line" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/line"
+            android:layout_width="wrap_content"
+            android:layout_height="4dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="#8effffff"
+            android:minWidth="126dp"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe.refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler.view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/action.tweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="14dp"
+        android:src="@drawable/ic_action_tweet"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:borderWidth="10dp"
+        app:elevation="6dp"
+        app:fabSize="normal" />
+
+</FrameLayout>

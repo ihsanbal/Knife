@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+/build
+/captures
+/.idea/
+/twitter-core/.idea/
+/twitter-core/build/
+/twitter/build/
+/tweet-ui/build/
+/tweet-composer/build/
+/app/gradle.properties
+/.play/
+/.keystore/

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.ihsanbal.knife.ui.TweetActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <com.ihsanbal.knife.widget.KAutoCompleteEditText
+                android:id="@+id/auto.complete"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="60dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="@string/what_is_happening"
+                android:paddingTop="14dp"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom.sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="55dp"
+            app:elevation="4dp"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
+
+                <com.ihsanbal.knife.widget.KTextView
+                    android:id="@+id/tweet.count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:text="0"
+                    tools:text="140" />
+
+                <com.ihsanbal.knife.widget.KAppCompatButton
+                    android:id="@+id/button.tweet"
+                    style="@style/tw__ComposerTweetButton"
+                    android:layout_gravity="center_vertical"
+                    android:padding="7dp" />
+            </LinearLayout>
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/line.shadow"
+                android:layout_width="0dp"
+                android:layout_height="1.5dp"
+                android:background="@color/colorPrimaryDark" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler.view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

@@ -1,0 +1,110 @@
+/*
+ * Copyright (C) 2015 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+apply plugin: 'com.android.library'
+apply from: rootProject.qualityScript
+apply from: rootProject.deployScript
+apply plugin: io.fabric.gradle.weaving.ArtifactSizePlugin
+apply plugin: io.fabric.gradle.weaving.FabricPropertiesPlugin
+apply plugin: io.fabric.gradle.weaving.DexMethodCountPlugin
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        versionCode 1
+        versionName version
+        minSdkVersion rootProject.minSdkVersion.twitter
+        consumerProguardFiles 'proguard.txt'
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "GROUP", "\"${pom_group_id}\""
+            buildConfigField "String", "ARTIFACT_ID", "\"${pom_artifact_id}\""
+            buildConfigField "String", "BUILD_NUMBER", "\"${buildNumber}\""
+            buildConfigField "long", "BUILD_TIME", "${System.currentTimeMillis()}L"
+
+            testCoverageEnabled enableTestCodeCoverage
+        }
+        release {
+            buildConfigField "String", "GROUP", "\"${pom_group_id}\""
+            buildConfigField "String", "ARTIFACT_ID", "\"${pom_artifact_id}\""
+            buildConfigField "String", "BUILD_NUMBER", "\"${buildNumber}\""
+            buildConfigField "long", "BUILD_TIME", "${System.currentTimeMillis()}L"
+        }
+    }
+
+    lintOptions {
+        warningsAsErrors true
+    }
+
+    dexMethodCount {
+        packageFilter = "com.twitter.sdk.android.tweetui"
+    }
+
+    //Gradle publishes only release by default for multi module projects
+    //This will publish all build variants and we can specifically choose them
+    defaultPublishConfig 'release'
+    publishNonDefault true
+
+    compileOptions {
+        sourceCompatibility rootProject.sourceCompatibilityVersion
+        targetCompatibility rootProject.targetCompatibilityVersion
+    }
+
+    // Forcibly add debug and the generated "R" files onto the test classpath
+    sourceSets {
+        test.java.srcDirs += "build/generated/source/r/debug"
+        test.java.srcDirs += "src/debug"
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+ext.projectDependencies = [
+        ':sdk:twitter:twitter-core' : 'com.twitter.sdk.android:twitter-core:+@aar'
+]
+
+dependencies {
+    projectDependencies.each { path, binary ->
+        debugCompile project(path: path, configuration: 'debug')
+        releaseCompile projectOrBinary(path: path, configuration: 'release', binary: binary)
+    }
+
+    compile dependency.picasso
+    compile dependency.supportV4
+
+    androidTestCompile dependency.retrofitMock
+    androidTestCompile dependency.mockito
+    androidTestCompile dependency.dexmakerMockito
+    androidTestCompile dependency.fabricTest
+
+    testCompile dependency.fabricTest
+    testCompile dependency.mockito
+    testCompile dependency.junit
+    testCompile(dependency.robolectric) {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    testCompile (dependency.junitAddons) {
+        transitive = false
+    }
+}

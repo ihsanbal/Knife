@@ -1,0 +1,132 @@
+/*
+ * Copyright (C) 2015 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+apply plugin: 'com.android.library'
+apply from: rootProject.qualityScript
+apply from: rootProject.deployScript
+apply plugin: io.fabric.gradle.weaving.ArtifactSizePlugin
+apply plugin: io.fabric.gradle.weaving.FabricPropertiesPlugin
+apply plugin: io.fabric.gradle.release.FabricKitReleasePlugin
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        versionCode 1
+        versionName version
+        minSdkVersion rootProject.minSdkVersion.twitter
+    }
+
+    lintOptions {
+        warningsAsErrors true
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "GROUP", "\"${pom_group_id}\""
+            buildConfigField "String", "ARTIFACT_ID", "\"${pom_artifact_id}\""
+            buildConfigField "String", "BUILD_NUMBER", "\"${buildNumber}\""
+
+            testCoverageEnabled enableTestCodeCoverage
+        }
+
+        release {
+            buildConfigField "String", "GROUP", "\"${pom_group_id}\""
+            buildConfigField "String", "ARTIFACT_ID", "\"${pom_artifact_id}\""
+            buildConfigField "String", "BUILD_NUMBER", "\"${buildNumber}\""
+        }
+    }
+
+    //Gradle publishes only release by default for multi module projects
+    //This will publish all build variants and we can specifically choose them
+    defaultPublishConfig 'release'
+    publishNonDefault true
+
+    compileOptions {
+        sourceCompatibility rootProject.sourceCompatibilityVersion
+        targetCompatibility rootProject.targetCompatibilityVersion
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+ext.projectDependencies = [
+        ':sdk:twitter:twitter-core' : 'com.twitter.sdk.android:twitter-core:+@aar',
+        ':sdk:twitter:tweet-ui' : 'com.twitter.sdk.android:tweet-ui:+@aar',
+        ':sdk:twitter:tweet-composer' : 'com.twitter.sdk.android:tweet-composer:+@aar'
+]
+
+dependencies {
+    projectDependencies.each { path, binary ->
+        debugCompile project(path: path, configuration: 'debug')
+        releaseCompile projectOrBinary(path: path, configuration: 'release', binary: binary)
+    }
+
+    testCompile dependency.mockito
+    testCompile dependency.junit
+    testCompile(dependency.robolectric) {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+}
+
+fabricKitRelease {
+    apiKey = project.hasProperty('TWITTER_KIT_API_KEY') ? project.TWITTER_KIT_API_KEY : ""
+    friendlyName = "Twitter"
+    name = "${project.pom_group_id}.${project.pom_artifact_id}"
+    description = "Integrate Log in with Twitter, embed Tweets, and leverage the Twitter API."
+    version = project.version
+    artifactUrl {
+        repository = "https://maven.fabric.io/public"
+        groupId = project.pom_group_id
+        artifactId = project.pom_artifact_id
+    }
+    releaseNotesUrl = "https://s3.amazonaws.com/kits-crashlytics-com/android/com/twitter/sdk/android/twitter/${project.version}/twitter-${project.version}-release-notes.html"
+    learnMoreUrl = "http://docs.fabric.io/android/twitter/index.html"
+    price {
+        plan = "free"
+    }
+    license {
+        name = "Twitter"
+        url = "https://twitter.com/tos"
+    }
+    releaseChannel = "public"
+    minBuild = 0
+    maxBuild = Integer.MAX_VALUE
+    minPlatformVersion {
+        apiVersion "14"
+    }
+    docsUrl = "https://docs.fabric.io/javadocs/twitter-core/${project.version}/index.html"
+    twitterHandle = "@twitterdev"
+    websiteUrl = "https://docs.fabric.io/android/twitter/index.html"
+}
+
+project.tasks.getByName('fabricKitRelease').enabled = rootProject.ext.kitsForRelease.get(project.path)
+
+task uploadFabricReleaseNotes(group: 'Release',
+        description: 'Upload Release Notes to S3 bucket kits-crashlytics-com',
+        type: io.fabric.gradle.release.FileUploadS3Task) {
+    enabled = rootProject.ext.kitsForRelease.get(project.path)
+    accessKey = System.properties['AWS_ACCESS_KEY_ID']
+    secretKey = System.properties['AWS_SECRET_ACCESS_KEY']
+    bucketName = System.properties['AWS_BUCKET']
+    destination = "android/com/twitter/sdk/android/twitter/${project.version}/twitter-${project.version}-release-notes.html"
+    srcFile = new File("${project.projectDir}/release-notes.html")
+}

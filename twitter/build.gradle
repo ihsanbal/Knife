@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2015 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        versionCode 1
+        versionName version
+        minSdkVersion rootProject.minSdkVersion.twitter
+    }
+
+    lintOptions {
+        warningsAsErrors true
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "GROUP", "\"${pom_group_id}\""
+            buildConfigField "String", "ARTIFACT_ID", "\"${pom_artifact_id}\""
+            buildConfigField "String", "BUILD_NUMBER", "\"${buildNumber}\""
+        }
+
+        release {
+            buildConfigField "String", "GROUP", "\"${pom_group_id}\""
+            buildConfigField "String", "ARTIFACT_ID", "\"${pom_artifact_id}\""
+            buildConfigField "String", "BUILD_NUMBER", "\"${buildNumber}\""
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.sourceCompatibilityVersion
+        targetCompatibility rootProject.targetCompatibilityVersion
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+ext.projectDependencies = [
+        ':twitter-core' : 'com.twitter.sdk.android:twitter-core:+@aar',
+        ':tweet-ui' : 'com.twitter.sdk.android:tweet-ui:+@aar',
+        ':tweet-composer' : 'com.twitter.sdk.android:tweet-composer:+@aar'
+]
+
+dependencies {
+    compile project(':twitter-core')
+    compile project(':tweet-composer')
+    compile project(':tweet-ui')
+
+    compile dependency.fabric
+
+    testCompile dependency.mockito
+    testCompile dependency.junit
+    testCompile(dependency.robolectric) {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+}

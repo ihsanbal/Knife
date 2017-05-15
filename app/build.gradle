@@ -1,0 +1,148 @@
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+apply plugin: 'com.github.triplet.play'
+apply plugin: 'com.google.gms.google-services'
+
+def buildVersionCode = new Date().format("yyMMddHHmm", TimeZone.getTimeZone("Europe/Istanbul")).toInteger()
+def buildVersionName = "1.0.0"
+
+android {
+    compileSdkVersion 25
+    //noinspection GradleDependency
+    buildToolsVersion "25.0.1"
+
+    playAccountConfigs {
+        defaultAccountConfig {
+            jsonFile = rootProject.file('.play/knife.json')
+        }
+    }
+
+    defaultConfig {
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
+        applicationId "com.ihsanbal.knife"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode buildVersionCode
+        versionName buildVersionName
+
+        manifestPlaceholders = [fabric_key: FABRIC_KEY]
+
+        buildConfigField("String", "TWITTER_KEY", "\"" + TWITTER_KEY + "\"")
+        buildConfigField("String", "TWITTER_SECRET", "\"" + TWITTER_SECRET + "\"")
+        buildConfigField("String", "ADMOB_APP_ID", "\"" + ADMOB_APP_ID + "\"")
+        buildConfigField("String", "AD_UNIT_ID_INTERSTITIAL", "\"" + AD_UNIT_ID_INTERSTITIAL + "\"")
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile rootProject.file('.keystore/knife.keystore')
+            storePassword "${STORE_PASSWORD}"
+            keyAlias "${KEY_ALIAS}"
+            keyPassword "${KEY_PASSWORD}"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            resValue "string", "ad_unit_id_banner", AD_UNIT_ID_BANNER
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = new File(output.outputFile.parent,
+                            output.outputFile.name.replace("-release", "-release-" + buildVersionName + "-" + buildVersionCode)
+                    )
+                }
+            }
+        }
+
+        debug {
+            applicationIdSuffix '.debug'
+            resValue "string", "ad_unit_id_banner", AD_UNIT_ID_BANNER
+        }
+    }
+
+    productFlavors {
+        internal {
+            applicationId 'com.ihsanbal.knife.internal'
+        }
+
+        production {
+            applicationId 'com.ihsanbal.knife'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+        checkAllWarnings true
+        htmlReport true
+        htmlOutput file("lint-report.html")
+        checkReleaseBuilds true
+
+        disable 'MissingTranslation'
+        error 'CommitTransaction'
+        error 'InconsistentArrays'
+        error 'Registered'
+        error 'ManifestOrder'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+    }
+}
+
+play {
+    track = 'alpha'
+}
+
+dependencies {
+
+    def supportVersion = "25.3.1"
+    def butterKnifeVersion = "8.5.1"
+    def rxVersion = "2.0.1"
+    def loggerInterceptorVersion = "2.0.0"
+    def paperDBVersion = "2.0"
+    def svgVersion = "1.0.2"
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile('com.crashlytics.sdk.android:answers:1.3.12@aar') {
+        transitive = true
+    }
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+        transitive = true
+    }
+    compile("com.github.ihsanbal:LoggingInterceptor:$loggerInterceptorVersion") {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    compile project(':tweet-ui')
+    compile project(':tweet-composer')
+    compile project(':twitter-core')
+    compile project(':twitter')
+
+    compile 'com.google.firebase:firebase-ads:10.2.1'
+
+    compile "io.reactivex.rxjava2:rxandroid:$rxVersion"
+    compile "io.reactivex.rxjava2:rxjava:$rxVersion"
+
+    compile "com.android.support:cardview-v7:$supportVersion"
+    compile "com.android.support:appcompat-v7:$supportVersion"
+    compile "com.android.support:design:$supportVersion"
+
+    compile "io.paperdb:paperdb:$paperDBVersion"
+    compile "com.jrummyapps:animated-svg-view:$svgVersion"
+    compile "com.jakewharton:butterknife:$butterKnifeVersion"
+
+    testCompile 'junit:junit:4.12'
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+}
+
+apply plugin: 'com.google.gms.google-services'
