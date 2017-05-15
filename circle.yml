@@ -12,6 +12,7 @@ dependencies:
     - git log --pretty=format:'+ %s' -n 14 | grep -v "Merge\|release\|Update circle\|Update build" > change.log
   override:
     - source environmentSetup.sh && copyEnvVarsToGradleProperties
+    - source firebaseSetups.sh && copyFirebaseVarsToPlayFolder
     - ./gradlew dependencies --daemon
 
 test:
