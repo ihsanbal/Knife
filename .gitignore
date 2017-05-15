@@ -10,5 +10,4 @@
 /tweet-ui/build/
 /tweet-composer/build/
 /app/gradle.properties
-/.play/
 /.keystore/
