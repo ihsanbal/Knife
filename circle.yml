@@ -8,11 +8,11 @@ machine:
 
 dependencies:
   pre:
+    - source environmentSetup.sh && copyEnvVarsToGradleProperties
+    - source firebaseSetups.sh && copyFirebaseVarsToPlayFolder
     - echo y | android update sdk --no-ui --all --filter tools,platform-tools,build-tools-25.0.1,android-25,extra-google-m2repository,extra-google-google_play_services,extra-android-support,extra-android-m2repository
     - git log --pretty=format:'+ %s' -n 14 | grep -v "Merge\|release\|Update circle\|Update build" > change.log
   override:
-    - source environmentSetup.sh && copyEnvVarsToGradleProperties
-    - source firebaseSetups.sh && copyFirebaseVarsToPlayFolder
     - ./gradlew dependencies --daemon
 
 test:
