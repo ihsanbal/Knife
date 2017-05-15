@@ -8,8 +8,9 @@ machine:
 
 dependencies:
   pre:
-    - cat ./app/google-services.json
-    - cat ./app/knife.json
+    - echo '//Auto generated json file on circleci\n\n' >knife.json
+    - echo '//Auto generated json file on circleci\n\n' >google-services.json
+    - cat ./knife.json
     - source environmentSetup.sh && copyEnvVarsToGradleProperties
     - source firebaseSetups.sh && copyFirebaseVarsToPlayFolder
     - echo y | android update sdk --no-ui --all --filter tools,platform-tools,build-tools-25.0.1,android-25,extra-google-m2repository,extra-google-google_play_services,extra-android-support,extra-android-m2repository
