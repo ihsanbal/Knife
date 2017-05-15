@@ -11,4 +11,3 @@
 /tweet-composer/build/
 /app/gradle.properties
 /.keystore/
-/.play/knife.json
