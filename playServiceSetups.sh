@@ -32,6 +32,4 @@ function copyPlayServiceVarsToPlayFolder {
 
         echo "Writing json to google-services.json"
                 echo "$PLAY_SERVICE" >> ${SERVICE_PATH}
-                
-    printf "%s" "$(<${SERVICE_PATH})"
 }

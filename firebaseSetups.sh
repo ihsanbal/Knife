@@ -32,6 +32,4 @@ function copyFirebaseVarsToPlayFolder {
 
         echo "Writing json to knife.json"
                 echo "$KNIFE_JSON" >> ${KNIFE_PATH}
-    
-    printf "%s" "$(<${KNIFE_PATH})"
 }

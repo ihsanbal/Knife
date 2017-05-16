@@ -8,6 +8,7 @@ machine:
 
 dependencies:
   pre:
+    - echo -n "" > /home/ubuntu/.gradle/gradle.properties
     - source environmentSetup.sh && copyEnvVarsToGradleProperties
     - mv /home/ubuntu/Knife/app/google-services-sample.json /home/ubuntu/Knife/app/google-services.json
     - echo -n "" > /home/ubuntu/Knife/app/google-services.json

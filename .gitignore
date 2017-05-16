@@ -10,6 +10,5 @@
 /tweet-ui/build/
 /tweet-composer/build/
 /app/gradle.properties
-/.keystore/
 /.play/knife.json
 /app/google-services.json

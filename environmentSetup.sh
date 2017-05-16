@@ -55,6 +55,4 @@ function copyEnvVarsToGradleProperties {
 
         echo "Writing AD_UNIT_ID_BANNER to gradle.properties..."
                 echo "AD_UNIT_ID_BANNER=$AD_UNIT_ID_BANNER" >> ${GRADLE_PROPERTIES}
-                
-    printf "%s" "$(<${GRADLE_PROPERTIES})"
 }
