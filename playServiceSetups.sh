@@ -21,15 +21,17 @@
 #!/usr/bin/env bash
 
 function copyPlayServiceVarsToPlayFolder {
-    PROJECT_PATH=$HOME"/Knife/app/google-services.json"
-    echo "$PROJECT_PATH"
+    SERVICE_PATH=$HOME"/Knife/app/google-services.json"
+    echo "$SERVICE_PATH"
 
-    if [ ! -f "$PROJECT_PATH" ]; then
+    if [ ! -f "$SERVICE_PATH" ]; then
         echo "Service Json file does not exist"
     fi
         echo "Creating Service Json file..."
-        touch ${PROJECT_PATH}
+        touch ${SERVICE_PATH}
 
         echo "Writing json to google-services.json"
-                echo "$PLAY_SERVICE" >> ${PROJECT_PATH}
+                echo "$PLAY_SERVICE" >> ${SERVICE_PATH}
+                
+    printf "%s" "$(<${SERVICE_PATH})"
 }

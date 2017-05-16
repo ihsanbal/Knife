@@ -21,15 +21,17 @@
 #!/usr/bin/env bash
 
 function copyFirebaseVarsToPlayFolder {
-    PROJECT_PATH=$HOME"/Knife/.play/knife.json"
-    echo "$PROJECT_PATH"
+    KNIFE_PATH=$HOME"/Knife/.play/knife.json"
+    echo "$KNIFE_PATH"
 
-    if [ ! -f "$PROJECT_PATH" ]; then
+    if [ ! -f "$KNIFE_PATH" ]; then
         echo "Knife Json file does not exist"
     fi
         echo "Creating Knife Json file..."
-        touch ${PROJECT_PATH}
+        touch ${KNIFE_PATH}
 
         echo "Writing json to knife.json"
-                echo "$KNIFE_JSON" >> ${PROJECT_PATH}
+                echo "$KNIFE_JSON" >> ${KNIFE_PATH}
+    
+    printf "%s" "$(<${KNIFE_PATH})"
 }
