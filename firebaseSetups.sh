@@ -21,7 +21,7 @@
 #!/usr/bin/env bash
 
 function copyFirebaseVarsToPlayFolder {
-    PROJECT_PATH=:$HOME"./.play/knife.json"
+    PROJECT_PATH=:$HOME"/.play/knife.json"
     echo "$PROJECT_PATH"
 
     if [ ! -f "$PROJECT_PATH" ]; then
