@@ -21,7 +21,7 @@
 #!/usr/bin/env bash
 
 function copyPlayServiceVarsToPlayFolder {
-    PROJECT_PATH=:"./app/google-services.json"
+    PROJECT_PATH=:"/Knife/app/google-services.json"
     echo "$PROJECT_PATH"
 
     if [ ! -f "$PROJECT_PATH" ]; then
