@@ -8,8 +8,8 @@ machine:
 
 dependencies:
   pre:
-    - mv home/ubuntu/Knife/app/google-services-sample.json google-services.json
-    - mv home/ubuntu/Knife/.play/knife-sample.json knife.json
+    - mv /home/ubuntu/Knife/app/google-services-sample.json google-services.json
+    - mv /home/ubuntu/Knife/.play/knife-sample.json knife.json
     - source environmentSetup.sh && copyEnvVarsToGradleProperties
     - source firebaseSetups.sh && copyFirebaseVarsToPlayFolder
     - source playServiceSetups.sh && copyPlayServiceVarsToPlayFolder
