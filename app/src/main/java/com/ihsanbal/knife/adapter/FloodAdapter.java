@@ -69,9 +69,6 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
                 holder.mInReplyLineFull.setVisibility(View.VISIBLE);
                 holder.mInReplyLineBottom.setVisibility(View.GONE);
             }
-        }
-        if (item.getType() == TweetActivity.Type.COMPLETE.ordinal()) {
-            holder.itemView.setVisibility(View.GONE);
         } else {
             holder.mInReplyLineTop.setVisibility(View.GONE);
             holder.mInReplyLineFull.setVisibility(View.GONE);
