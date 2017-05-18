@@ -4,7 +4,7 @@ apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.google.gms.google-services'
 
 def buildVersionCode = new Date().format("yyMMddHHmm", TimeZone.getTimeZone("Europe/Istanbul")).toInteger()
-def buildVersionName = "1.0.0"
+def buildVersionName = "1.0.1"
 
 android {
     compileSdkVersion 25
@@ -69,10 +69,12 @@ android {
     productFlavors {
         internal {
             applicationId 'com.ihsanbal.knife.internal'
+            resValue "string", "app_name", '"Knife Internal"'
         }
 
         production {
             applicationId 'com.ihsanbal.knife'
+            resValue "string", "app_name", '"Knife"'
         }
     }
 
