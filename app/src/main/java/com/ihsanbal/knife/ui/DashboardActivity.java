@@ -8,15 +8,18 @@
 
 package com.ihsanbal.knife.ui;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.ihsanbal.knife.R;
@@ -27,9 +30,7 @@ import com.ihsanbal.knife.core.CircularTransformation;
 import com.ihsanbal.knife.core.Constant;
 import com.ihsanbal.knife.core.EndlessScrollListener;
 import com.ihsanbal.knife.model.TypeText;
-import com.ihsanbal.knife.tools.AnimUtils;
 import com.ihsanbal.knife.tools.TweetUtils;
-import com.ihsanbal.knife.widget.KTextView;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
@@ -53,14 +54,18 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
     private ArrayList<Tweet> mTweetList = new ArrayList<>();
     private TimelineAdapter mAdapter;
-    private ValueAnimator animFit;
-    private ValueAnimator animDefault;
     private TwitterSession session;
     private ApiClient.Api api;
     private User mUser;
 
-    @BindView(R.id.user_name)
-    KTextView mUserName;
+    @BindView(R.id.navigation_view)
+    NavigationView mNavigationView;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -70,9 +75,6 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
     @BindView(R.id.profile_image)
     AppCompatImageView circleImageView;
-
-    @BindView(R.id.line)
-    View lineView;
 
     @BindView(R.id.banner_view)
     AppCompatImageView backgroundImage;
@@ -100,26 +102,6 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     @Override
     protected int getLayout() {
         return R.layout.activity_dashboard;
-    }
-
-    private void animateFit() {
-        if (animDefault != null && animDefault.isRunning())
-            animDefault.cancel();
-        if (animFit != null && animFit.isRunning()) {
-            return;
-        }
-        animFit = AnimUtils.animateFit(lineView, mRecyclerView.getMeasuredWidth());
-        animFit.start();
-    }
-
-    private void animateDefault() {
-        if (animFit != null && animFit.isRunning())
-            animFit.cancel();
-        if (animDefault != null && animDefault.isRunning()) {
-            return;
-        }
-        animDefault = AnimUtils.animateDefault(lineView, lineView.getMinimumWidth());
-        animDefault.start();
     }
 
     private void showProfile() {
@@ -166,7 +148,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
     private void loadProfile(User data) {
         if (data != null) {
-            mUserName.setText(data.screenName);
+            mToolbar.setTitle(data.screenName);
             Picasso.with(DashboardActivity.this)
                     .load(data.profileImageUrl)
                     .fit()
@@ -181,6 +163,19 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     }
 
     private void init() {
+        setSupportActionBar(mToolbar);
+        new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, 0, 0) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        }.syncState();
         mSwipeLayout.setOnRefreshListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new TimelineAdapter(mTweetList);
@@ -194,12 +189,6 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (manager.findFirstCompletelyVisibleItemPosition() == 0) {
-                    animateDefault();
-                } else {
-                    animateFit();
-                }
             }
         });
     }

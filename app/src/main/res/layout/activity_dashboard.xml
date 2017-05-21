@@ -1,111 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer.layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.CollapsingToolbarLayout
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:contentScrim="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/banner.view"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    app:layout_collapseMode="parallax"
+                    app:srcCompat="@drawable/knife_bg" />
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="25dp"
+                    android:gravity="bottom"
+                    app:layout_collapseMode="pin">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <android.support.v7.widget.AppCompatImageView
+                            android:id="@+id/profile.image"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginLeft="14dp"
+                            android:layout_marginRight="14dp" />
+
+                    </FrameLayout>
+
+                </android.support.v7.widget.Toolbar>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe.refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="@android:color/transparent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            android:background="@android:color/white"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/banner.view"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler.view"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                app:layout_collapseMode="parallax"
-                app:srcCompat="@drawable/knife_bg" />
+                android:layout_height="match_parent" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="25dp"
-                android:gravity="bottom"
-                app:layout_collapseMode="pin">
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/action.tweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="14dp"
+            android:src="@drawable/ic_action_tweet"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:borderWidth="10dp"
+            app:elevation="6dp"
+            app:fabSize="normal" />
 
-                    <android.support.v7.widget.AppCompatImageView
-                        android:id="@+id/profile.image"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_marginLeft="14dp"
-                        android:layout_marginRight="14dp" />
+    </android.support.design.widget.CoordinatorLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <com.ihsanbal.knife.widget.KTextView
-                            android:id="@+id/user.name"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:text="@string/time_line"
-                            android:textColor="#8effffff"
-                            android:textSize="30sp"
-                            android:textStyle="bold"
-                            app:font="bold"
-                            tools:text="User" />
-
-                        <android.support.v7.widget.AppCompatTextView
-                            android:id="@+id/line"
-                            android:layout_width="wrap_content"
-                            android:layout_height="4dp"
-                            android:background="#8effffff"
-                            android:minWidth="126dp"
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </FrameLayout>
-
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe.refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler.view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/action.tweet"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation.view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="14dp"
-        android:src="@drawable/ic_action_tweet"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:borderWidth="10dp"
-        app:elevation="6dp"
-        app:fabSize="normal" />
-
-</android.support.design.widget.CoordinatorLayout>
-
-
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/menu_drawer" />
+</android.support.v4.widget.DrawerLayout>

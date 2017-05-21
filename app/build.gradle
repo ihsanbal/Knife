@@ -4,7 +4,7 @@ apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.google.gms.google-services'
 
 def buildVersionCode = new Date().format("yyMMddHHmm", TimeZone.getTimeZone("Europe/Istanbul")).toInteger()
-def buildVersionName = "1.0.1"
+def buildVersionName = "1.0.2"
 
 android {
     compileSdkVersion 25
