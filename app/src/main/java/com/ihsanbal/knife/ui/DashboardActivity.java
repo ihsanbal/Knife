@@ -29,6 +29,7 @@ import com.ihsanbal.knife.core.EndlessScrollListener;
 import com.ihsanbal.knife.model.TypeText;
 import com.ihsanbal.knife.tools.AnimUtils;
 import com.ihsanbal.knife.tools.TweetUtils;
+import com.ihsanbal.knife.widget.KTextView;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
@@ -57,6 +58,9 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     private TwitterSession session;
     private ApiClient.Api api;
     private User mUser;
+
+    @BindView(R.id.user_name)
+    KTextView mUserName;
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -162,6 +166,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
     private void loadProfile(User data) {
         if (data != null) {
+            mUserName.setText(data.screenName);
             Picasso.with(DashboardActivity.this)
                     .load(data.profileImageUrl)
                     .fit()
