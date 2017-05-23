@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 def buildVersionCode = new Date().format("yyMMddHHmm", TimeZone.getTimeZone("Europe/Istanbul")).toInteger()
 def buildVersionName = "1.0.2"
@@ -24,6 +25,7 @@ android {
         targetSdkVersion 25
         versionCode buildVersionCode
         versionName buildVersionName
+        multiDexEnabled true
 
         manifestPlaceholders = [fabric_key: FABRIC_KEY]
 
@@ -110,27 +112,17 @@ dependencies {
     def loggerInterceptorVersion = "2.0.0"
     def paperDBVersion = "2.0"
     def svgVersion = "1.0.2"
+    def firebaseVersion = '10.2.6'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile('com.crashlytics.sdk.android:answers:1.3.12@aar') {
-        transitive = true
-    }
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
-        transitive = true
-    }
-    compile("com.github.ihsanbal:LoggingInterceptor:$loggerInterceptorVersion") {
-        exclude group: 'org.json', module: 'json'
-    }
-
     compile project(':tweet-ui')
     compile project(':tweet-composer')
     compile project(':twitter-core')
     compile project(':twitter')
 
-    compile 'com.google.firebase:firebase-ads:10.2.1'
+    compile "com.google.firebase:firebase-core:$firebaseVersion"
+    compile "com.google.firebase:firebase-ads:$firebaseVersion"
+    compile "com.google.firebase:firebase-perf:$firebaseVersion"
 
     compile "io.reactivex.rxjava2:rxandroid:$rxVersion"
     compile "io.reactivex.rxjava2:rxjava:$rxVersion"
@@ -143,8 +135,19 @@ dependencies {
     compile "com.jrummyapps:animated-svg-view:$svgVersion"
     compile "com.jakewharton:butterknife:$butterKnifeVersion"
 
-    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:multidex:1.0.1'
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    compile('com.crashlytics.sdk.android:answers:1.3.13@aar') {
+        transitive = true
+    }
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
+    }
+    compile("com.github.ihsanbal:LoggingInterceptor:$loggerInterceptorVersion") {
+        exclude group: 'org.json', module: 'json'
+    }
+    testCompile 'junit:junit:4.12'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
 
-</LinearLayout>
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/profile.cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionName="cover"
+        app:srcCompat="@drawable/knife_bg"
+        tools:targetApi="lollipop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="14dp"
+        android:orientation="horizontal">
+
+        <com.ihsanbal.knife.widget.KTextView
+            android:id="@+id/screen.name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:alpha="0.7"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:font="bold"
+            tools:text="\@sampleapp_" />
+
+        <com.ihsanbal.knife.widget.KTextView
+            android:id="@+id/display.name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:alpha="0.7"
+            android:gravity="end|center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:font="light"
+            tools:text="ihsan BAL" />
+    </LinearLayout>
+
+</FrameLayout>

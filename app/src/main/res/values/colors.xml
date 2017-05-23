@@ -4,7 +4,7 @@
     <!-- Application -->
     <color name="colorPrimary">#1dcaff</color>
     <color name="colorPrimaryDark">#00aced</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#333333</color>
 
     <!-- Knife-Background -->
     <color name="colorStart">#23A4DB</color>

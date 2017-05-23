@@ -14,5 +14,8 @@ Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</st
     <string name="button_no">Hayır</string>
     <string name="complete">Tamamlandı</string>
     <string name="complete_flood">Akış başarıyla tamamlandı.</string>
-
+    <string name="save">Kaydet</string>
+    <string name="title">Başlık</string>
+    <string name="cancel">Çıkış</string>
+    <string name="save_message">Saving completed!</string>
 </resources>

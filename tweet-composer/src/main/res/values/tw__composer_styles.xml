@@ -95,6 +95,18 @@
         <item name="android:textAlignment">center</item>
     </style>
 
+    <style name="tw__ComposerTweetButtonColored">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/tw__composer_tweet_btn_height</item>
+        <item name="android:layout_marginRight">@dimen/tw__composer_spacing_large</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/tw__composer_white</item>
+        <item name="android:background">@drawable/tw__btn_composer_tweet_color</item>
+        <item name="android:text">@string/tw__post_tweet</item>
+        <item name="android:textSize">@dimen/tw__composer_font_size_small</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="tw__ComposerCharCountOverflow" parent="tw__ComposerCharCount">
         <item name="android:textColor">@color/tw__composer_red</item>
     </style>

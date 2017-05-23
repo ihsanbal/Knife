@@ -14,5 +14,8 @@ Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</st
     <string name="button_no">No</string>
     <string name="complete">Completed</string>
     <string name="complete_flood">Flood completed successfully.</string>
-
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="cancel">Cancel</string>
+    <string name="save_message">Saving completed!</string>
 </resources>

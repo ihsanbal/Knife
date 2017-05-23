@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.firebase.perf.metrics.AddTrace;
 import com.ihsanbal.knife.R;
 import com.ihsanbal.knife.adapter.TimelineAdapter;
 import com.ihsanbal.knife.api.ApiClient;
@@ -31,6 +32,7 @@ import com.ihsanbal.knife.core.Constant;
 import com.ihsanbal.knife.core.EndlessScrollListener;
 import com.ihsanbal.knife.model.TypeText;
 import com.ihsanbal.knife.tools.TweetUtils;
+import com.ihsanbal.knife.widget.KTextView;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
@@ -79,11 +81,23 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     @BindView(R.id.banner_view)
     AppCompatImageView backgroundImage;
 
+    @BindView(R.id.version_name)
+    KTextView mVersionName;
+
+    KTextView mScreenName;
+    KTextView mDisplayName;
+    AppCompatImageView mCover;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
         initTweetList();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         User user = Paper.book().read(Constant.USER);
         loadProfile(user);
         showProfile();
@@ -104,7 +118,9 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
         return R.layout.activity_dashboard;
     }
 
+    @AddTrace(name = "profile")
     private void showProfile() {
+        logEvent(session.getUserName(), "profile", "start");
         api.show(session.getUserId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -123,12 +139,12 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
                     @Override
                     public void onError(Throwable e) {
-
+                        logEvent(session.getUserName(), "error", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
+                        logEvent(session.getUserName(), "profile", "complete");
                     }
                 });
     }
@@ -148,7 +164,9 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
     private void loadProfile(User data) {
         if (data != null) {
-            mToolbar.setTitle(data.screenName);
+            mScreenName.setText("@");
+            mScreenName.append(data.screenName);
+            mDisplayName.setText(data.name);
             Picasso.with(DashboardActivity.this)
                     .load(data.profileImageUrl)
                     .fit()
@@ -203,6 +221,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     }
 
     private void initTweetList() {
+        logEvent(session.getUserName(), "updates", "start");
         api.tweets(session.getUserId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -221,17 +240,19 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
                     @Override
                     public void onError(Throwable e) {
-
+                        logEvent(session.getUserName(), "updates", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
+                        logEvent(session.getUserName(), "updates", "complete");
                     }
                 });
     }
 
+    @AddTrace(name = "paging-more")
     private void loadMore(long id) {
+        logEvent(session.getUserName(), "paging-more", "start");
         api.tweets(session.getUserId(), id)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -249,18 +270,20 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
 
                     @Override
                     public void onError(Throwable e) {
-
+                        logEvent(session.getUserName(), "paging-more", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
+                        logEvent(session.getUserName(), "paging-more", "complete");
                     }
                 });
     }
 
+    @AddTrace(name = "paging-news")
     private void loadNews(long id) {
         postRefresh(true);
+        logEvent(session.getUserName(), "paging-news", "start");
         api.news(session.getUserId(), id)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -281,11 +304,12 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         postRefresh(false);
+                        logEvent(session.getUserName(), "paging-news", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
+                        logEvent(session.getUserName(), "paging-news", "complete");
                     }
                 });
     }

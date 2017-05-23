@@ -8,7 +8,7 @@
 
 package com.ihsanbal.knife;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -28,7 +28,7 @@ import okhttp3.internal.platform.Platform;
 /**
  * @author ihsan on 03/04/2017.
  */
-public class KnifeApplication extends Application {
+public class KnifeApplication extends MultiDexApplication {
 
     private ApiClient.Api api;
     private TwitterSession session;

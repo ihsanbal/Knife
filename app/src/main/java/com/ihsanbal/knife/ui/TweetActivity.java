@@ -9,6 +9,7 @@
 package com.ihsanbal.knife.ui;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -32,12 +34,14 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.firebase.perf.metrics.AddTrace;
 import com.ihsanbal.knife.BuildConfig;
 import com.ihsanbal.knife.R;
 import com.ihsanbal.knife.adapter.FloodAdapter;
 import com.ihsanbal.knife.api.ApiClient;
 import com.ihsanbal.knife.base.CompatBaseActivity;
 import com.ihsanbal.knife.core.Constant;
+import com.ihsanbal.knife.model.FloodCollection;
 import com.ihsanbal.knife.model.FloodModel;
 import com.ihsanbal.knife.model.TypeText;
 import com.ihsanbal.knife.tools.AnimUtils;
@@ -131,12 +135,19 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         init();
         initMenuItems();
         requestNewInterstitial();
     }
 
+    @AddTrace(name = "interstitial")
     private void requestNewInterstitial() {
+        logEvent("interstitial", "request", "start");
         AdRequest.Builder request = new AdRequest.Builder();
         if (BuildConfig.DEBUG) {
             request.addTestDevice("7D376E3F676EDD395AB09C5FB3940F34");
@@ -146,6 +157,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         mInterstitialAd.loadAd(request.build());
     }
 
+    @AddTrace(name = "share")
     private void callDetail(String sharedText) {
         if (!TextUtils.isEmpty(sharedText)) {
             try {
@@ -176,12 +188,13 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
 
                                 @Override
                                 public void onComplete() {
-
+                                    calculateTweetFlood();
                                 }
                             });
                 }
             } catch (Exception ignored) {
                 mTweetText.setText(sharedText);
+                calculateTweetFlood();
             }
         } else {
             Snackbar.make(mBottomSheet, R.string.no_res, Snackbar.LENGTH_SHORT).show();
@@ -222,8 +235,27 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
+                logEvent("interstitial", "action", "closed");
                 mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 calculateTweetFlood();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                logEvent("interstitial", "request", "failed");
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                logEvent("interstitial", "request", "loaded");
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+                logEvent("interstitial", "action", "opened");
             }
         });
         validator = new Validator();
@@ -315,7 +347,41 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         }
     }
 
+    private void saveFlood() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        @SuppressLint("InflateParams") final View view = LayoutInflater.from(this).inflate(R.layout.layout_alert, null);
+        builder.setView(view)
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        KAutoCompleteEditText title = (KAutoCompleteEditText) view.findViewById(R.id.title_edit);
+                        if (!TextUtils.isEmpty(title.getText().toString())) {
+                            calculateTweetFlood();
+                            ArrayList<FloodCollection> collection = Paper.book().read(Constant.COLLECTION, new ArrayList<FloodCollection>());
+                            FloodCollection newCollection = new FloodCollection(list);
+                            newCollection.setTitle(title.getText().toString());
+                            collection.add(newCollection);
+                            Paper.book().write(Constant.COLLECTION, collection);
+                            Toast.makeText(getApplicationContext(), R.string.save_message, Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Snackbar.make(mRecyclerView, R.string.warn, Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setCancelable(true)
+                .show();
+    }
+
+    @AddTrace(name = "flood")
     private void calculateTweetFlood() {
+        logEvent(user.screenName, "flood", mType.name());
         switch (mType) {
             case LIST:
                 inReplyStatusId = userRecipientsId;
@@ -336,9 +402,11 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         mAdapter.notifyDataSetChanged();
     }
 
+    @AddTrace(name = "update")
     private void callUpdateStatus(final ArrayList<FloodModel> items) {
         mTweetButton.setEnabled(false);
         count = 0;
+        logEvent(user.screenName, "update", "start");
         Observable.fromIterable(items)
                 .flatMap(new Function<FloodModel, ObservableSource<Tweet>>() {
                     @Override
@@ -368,7 +436,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
 
                     @Override
                     public void onComplete() {
-
+                        logEvent(user.screenName, "update", "complete : " + count);
                     }
                 });
     }
@@ -397,6 +465,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     }
 
     private void toastOnIUThread(final String message) {
+        logEvent(user.screenName, "update", message);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -408,11 +477,16 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+        onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
         checkClose();
     }
 
     private void checkClose() {
-        if (list.size() > 0) {
+        if (mTweetText.getText().length() > 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.warn)
                     .setMessage(R.string.warn_message)
@@ -420,6 +494,12 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
+                        }
+                    })
+                    .setNeutralButton(R.string.save, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            saveFlood();
                         }
                     })
                     .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {
@@ -452,7 +532,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     }
 
     public enum Type {
-        LIST, NUMBER, REPLY, COMPLETE
+        LIST, NUMBER, REPLY
     }
 
     @Override

@@ -13,8 +13,10 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ihsanbal.knife.KnifeApplication;
 import com.ihsanbal.knife.api.ApiClient;
+import com.ihsanbal.knife.core.Constant;
 import com.twitter.sdk.android.core.TwitterSession;
 
 import butterknife.ButterKnife;
@@ -22,8 +24,9 @@ import butterknife.ButterKnife;
 /**
  * @author ihsan on 14/04/2017.
  */
-
 public abstract class CompatBaseActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics mAnalytics;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,13 +36,23 @@ public abstract class CompatBaseActivity extends AppCompatActivity {
         ((KnifeApplication) getApplication()).initApi();
         getSession(((KnifeApplication) getApplication()).getSession());
         getApi(((KnifeApplication) getApplication()).getApi());
+        mAnalytics = FirebaseAnalytics.getInstance(this);
+    }
+
+    public void logEvent(String id, String key, String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, key);
+        bundle.putString(FirebaseAnalytics.Param.VALUE, value);
+        mAnalytics.logEvent(Constant.LOG, bundle);
     }
 
     protected abstract void getApi(ApiClient.Api api);
 
     protected abstract void getSession(TwitterSession session);
 
-    protected abstract @LayoutRes
+    protected abstract
+    @LayoutRes
     int getLayout();
 
 }

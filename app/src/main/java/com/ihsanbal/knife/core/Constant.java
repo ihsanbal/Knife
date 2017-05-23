@@ -14,4 +14,6 @@ package com.ihsanbal.knife.core;
 
 public class Constant {
     public static final String USER = "user:key";
+    public static final String LOG = "knife";
+    public static final String COLLECTION = "knife:collection";
 }
