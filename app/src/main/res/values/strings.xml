@@ -18,4 +18,10 @@ Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</st
     <string name="title">Title</string>
     <string name="cancel">Cancel</string>
     <string name="save_message">Saving completed!</string>
+    <string name="profile">Profil</string>
+    <string name="collection">Koleksiyon</string>
+    <string name="ghost">Hayalet</string>
+    <string name="delete">Delete</string>
+    <string name="reward">Reward</string>
+    <string name="amount">Tutar</string>
 </resources>

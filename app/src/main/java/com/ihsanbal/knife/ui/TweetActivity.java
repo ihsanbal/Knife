@@ -41,6 +41,7 @@ import com.ihsanbal.knife.adapter.FloodAdapter;
 import com.ihsanbal.knife.api.ApiClient;
 import com.ihsanbal.knife.base.CompatBaseActivity;
 import com.ihsanbal.knife.core.Constant;
+import com.ihsanbal.knife.injector.Injector;
 import com.ihsanbal.knife.model.FloodCollection;
 import com.ihsanbal.knife.model.FloodModel;
 import com.ihsanbal.knife.model.TypeText;
@@ -50,11 +51,12 @@ import com.ihsanbal.knife.widget.KAppCompatButton;
 import com.ihsanbal.knife.widget.KAutoCompleteEditText;
 import com.ihsanbal.knife.widget.KTextView;
 import com.twitter.Validator;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -74,14 +76,12 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
 
     private static final String TYPE = "tweet:type";
 
-    private ApiClient.Api api;
     private FloodAdapter mAdapter;
     private ArrayList<FloodModel> list = new ArrayList<>();
     private BottomSheetBehavior<View> mBehavior;
     private InterstitialAd mInterstitialAd;
     private Long inReplyStatusId = null;
     private Type mType = Type.LIST;
-    private User user;
     private ValueAnimator animFit;
     private ValueAnimator animDefault;
     private Long userRecipientsId;
@@ -89,6 +89,12 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     private String screenName;
     private int count;
     private Validator validator;
+
+    @Inject
+    ApiClient.Api api;
+
+    @Inject
+    User user;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -120,9 +126,12 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Injector.getInstance(this).inject(this);
         toolbar.setNavigationIcon(R.drawable.ic_close);
         toolbar.setNavigationOnClickListener(this);
-        user = Paper.book().read(Constant.USER);
+    }
+
+    private void getExtras() {
         if (getIntent().getExtras() != null) {
             typed = getIntent().getParcelableExtra(TYPE);
             switch (typed.getType()) {
@@ -141,6 +150,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
         init();
+        getExtras();
         initMenuItems();
         requestNewInterstitial();
     }
@@ -320,16 +330,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         }
         animDefault = AnimUtils.animateDefault(mLineShadow, 0);
         animDefault.start();
-    }
-
-    @Override
-    protected void getApi(ApiClient.Api api) {
-        this.api = api;
-    }
-
-    @Override
-    protected void getSession(TwitterSession session) {
-
     }
 
     @Override

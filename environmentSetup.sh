@@ -41,6 +41,9 @@ function copyEnvVarsToGradleProperties {
         echo "Writing FABRIC_KEY to gradle.properties..."
                 echo "FABRIC_KEY=$FABRIC_KEY" >> ${GRADLE_PROPERTIES}
 
+        echo "Writing RSA_KEY to gradle.properties..."
+                echo "RSA_KEY=$RSA_KEY" >> ${GRADLE_PROPERTIES}
+
         echo "Writing TWITTER_KEY to gradle.properties..."
                 echo "TWITTER_KEY=$TWITTER_KEY" >> ${GRADLE_PROPERTIES}
 

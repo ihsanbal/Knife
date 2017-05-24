@@ -10,9 +10,13 @@ package com.ihsanbal.knife.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,9 +24,16 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.perf.metrics.AddTrace;
+import com.ihsanbal.knife.BuildConfig;
 import com.ihsanbal.knife.R;
 import com.ihsanbal.knife.adapter.TimelineAdapter;
 import com.ihsanbal.knife.api.ApiClient;
@@ -30,8 +41,14 @@ import com.ihsanbal.knife.base.CompatBaseActivity;
 import com.ihsanbal.knife.core.CircularTransformation;
 import com.ihsanbal.knife.core.Constant;
 import com.ihsanbal.knife.core.EndlessScrollListener;
+import com.ihsanbal.knife.injector.Injector;
 import com.ihsanbal.knife.model.TypeText;
 import com.ihsanbal.knife.tools.TweetUtils;
+import com.ihsanbal.knife.tools.billing.IabBroadcastReceiver;
+import com.ihsanbal.knife.tools.billing.IabHelper;
+import com.ihsanbal.knife.tools.billing.IabResult;
+import com.ihsanbal.knife.tools.billing.Inventory;
+import com.ihsanbal.knife.tools.billing.Purchase;
 import com.ihsanbal.knife.widget.KTextView;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.TwitterSession;
@@ -40,6 +57,8 @@ import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -52,13 +71,23 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author ihsan on 03/04/2017.
  */
-public class DashboardActivity extends CompatBaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class DashboardActivity extends CompatBaseActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener, RewardedVideoAdListener, IabBroadcastReceiver.IabBroadcastListener {
 
+    private static final String SKU_PREMIUM = "premium";
     private ArrayList<Tweet> mTweetList = new ArrayList<>();
     private TimelineAdapter mAdapter;
-    private TwitterSession session;
-    private ApiClient.Api api;
     private User mUser;
+    private RewardedVideoAd mAd;
+    private boolean isRewarded;
+    private RewardItem reward;
+    private boolean isAdsShow;
+    private IabHelper mHelper;
+
+    @Inject
+    TwitterSession session;
+
+    @Inject
+    ApiClient.Api api;
 
     @BindView(R.id.navigation_view)
     NavigationView mNavigationView;
@@ -87,30 +116,38 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     KTextView mScreenName;
     KTextView mDisplayName;
     AppCompatImageView mCover;
+    private IabBroadcastReceiver mBroadcastReceiver;
+    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener;
+    private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener;
+    private String payload;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Injector.getInstance(this).inject(this);
         init();
         initTweetList();
+    }
+
+    private void initNativeAds() {
+        mAd = MobileAds.getRewardedVideoAdInstance(this);
+        mAd.setRewardedVideoAdListener(this);
+        AdRequest.Builder request = new AdRequest.Builder();
+        if (BuildConfig.DEBUG) {
+            request.addTestDevice("7D376E3F676EDD395AB09C5FB3940F34");
+            request.addTestDevice("0C0FC69324CCBEDFE5E27CCD8B6739B9");
+            request.addTestDevice("F2EC702D97E2FC94DDABB269E40744B1");
+        }
+        mAd.loadAd("ca-app-pub-2838738501361274/3862235935", request.build());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        initNativeAds();
         User user = Paper.book().read(Constant.USER);
         loadProfile(user);
         showProfile();
-    }
-
-    @Override
-    protected void getApi(ApiClient.Api api) {
-        this.api = api;
-    }
-
-    @Override
-    protected void getSession(TwitterSession session) {
-        this.session = session;
     }
 
     @Override
@@ -156,10 +193,14 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
                 TweetActivity.start(this, new TypeText());
                 break;
             case R.id.profile_image:
-                if (mUser != null)
-                    TweetUtils.showProfile(this, mUser.screenName);
+                openProfile();
                 break;
         }
+    }
+
+    private void openProfile() {
+        if (mUser != null)
+            TweetUtils.showProfile(this, mUser.screenName);
     }
 
     private void loadProfile(User data) {
@@ -167,6 +208,10 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
             mScreenName.setText("@");
             mScreenName.append(data.screenName);
             mDisplayName.setText(data.name);
+            Picasso.with(DashboardActivity.this)
+                    .load(data.profileImageUrl.replace("_normal", ""))
+                    .fit()
+                    .into(mCover);
             Picasso.with(DashboardActivity.this)
                     .load(data.profileImageUrl)
                     .fit()
@@ -181,6 +226,36 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     }
 
     private void init() {
+        mHelper = new IabHelper(this, BuildConfig.RSA_KEY);
+        mHelper.enableDebugLogging(BuildConfig.DEBUG);
+        mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+            @Override
+            public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+                Purchase premiumPurchase = inventory.getPurchase(SKU_PREMIUM);
+                boolean mIsPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
+            }
+        };
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            @Override
+            public void onIabSetupFinished(IabResult result) {
+                if (result.isSuccess()) {
+                    mBroadcastReceiver = new IabBroadcastReceiver(DashboardActivity.this);
+                    IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+                    registerReceiver(mBroadcastReceiver, broadcastFilter);
+                    try {
+                        mHelper.queryInventoryAsync(mGotInventoryListener);
+                    } catch (IabHelper.IabAsyncInProgressException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+            @Override
+            public void onIabPurchaseFinished(IabResult result, Purchase info) {
+
+            }
+        };
         setSupportActionBar(mToolbar);
         new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, 0, 0) {
 
@@ -194,6 +269,11 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
                 super.onDrawerOpened(drawerView);
             }
         }.syncState();
+        View headerView = mNavigationView.getHeaderView(0);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mScreenName = (KTextView) headerView.findViewById(R.id.screen_name);
+        mDisplayName = (KTextView) headerView.findViewById(R.id.display_name);
+        mCover = (AppCompatImageView) headerView.findViewById(R.id.profile_cover);
         mSwipeLayout.setOnRefreshListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new TimelineAdapter(mTweetList);
@@ -209,6 +289,11 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+    }
+
+    private boolean verifyDeveloperPayload(Purchase purchase) {
+        payload = purchase.getDeveloperPayload();
+        return payload != null;
     }
 
     private void postRefresh(final boolean show) {
@@ -326,4 +411,97 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        mDrawerLayout.closeDrawers();
+        toggleDrawer(item);
+        return false;
+    }
+
+    private void toggleDrawer(final MenuItem item) {
+        logEvent(String.valueOf(item.getItemId()), "menu", item.getTitle().toString());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (item.getItemId()) {
+                    case R.id.menu_profile:
+                        openProfile();
+                        break;
+                    case R.id.menu_collection:
+                        CollectionActivity.start(DashboardActivity.this);
+                        break;
+                    default:
+                        try {
+                            mHelper.launchPurchaseFlow(DashboardActivity.this, SKU_PREMIUM, 10001,
+                                    mPurchaseFinishedListener, payload);
+                        } catch (IabHelper.IabAsyncInProgressException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+            }
+        }, 300);
+    }
+
+    @Override
+    public void onRewarded(RewardItem reward) {
+        isRewarded = true;
+        this.reward = reward;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isRewarded && reward != null) {
+            Snackbar.make(mRecyclerView, getString(R.string.reward) + " : " + reward.getType() + getString(R.string.amount) + " : " +
+                    reward.getAmount(), Snackbar.LENGTH_LONG).setAction(R.string.reward, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            }).show();
+        }
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int errorCode) {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+        if (mAd.isLoaded() && !isAdsShow) {
+            isAdsShow = true;
+            mAd.show();
+        }
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+
+    }
+
+    @Override
+    public void receivedBroadcast() {
+        try {
+            mHelper.queryInventoryAsync(mGotInventoryListener);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+        }
+    }
 }
