@@ -887,7 +887,7 @@ public class IabHelper {
         }
     }
 
-    void flagStartAsync(String operation) throws IabAsyncInProgressException {
+    private void flagStartAsync(String operation) throws IabAsyncInProgressException {
         synchronized (mAsyncInProgressLock) {
             if (mAsyncInProgress) {
                 throw new IabAsyncInProgressException("Can't start async operation (" +
