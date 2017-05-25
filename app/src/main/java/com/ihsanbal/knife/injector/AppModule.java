@@ -36,13 +36,11 @@ import okhttp3.internal.platform.Platform;
 public class AppModule {
 
     @Provides
-    @Singleton
     User provideUser() {
         return Paper.book().read(Constant.USER);
     }
 
     @Provides
-    @Singleton
     ArrayList<FloodCollection> provideCollection() {
         return Paper.book().read(Constant.COLLECTION, new ArrayList<FloodCollection>());
     }

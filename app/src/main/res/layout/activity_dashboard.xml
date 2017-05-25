@@ -80,7 +80,7 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="14dp"
             android:src="@drawable/ic_action_tweet"
-            app:backgroundTint="@color/colorPrimaryDark"
+            app:backgroundTint="@color/colorAccent"
             app:borderWidth="10dp"
             app:elevation="6dp"
             app:fabSize="normal" />

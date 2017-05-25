@@ -8,6 +8,7 @@
 
 package com.ihsanbal.knife.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,12 @@ public class SplashActivity extends AppCompatActivity implements AnimatedSvgView
 
     @BindView(R.id.animated_svg_view)
     AnimatedSvgView mSvgView;
+
+    public static void start(Context context) {
+        Intent starter = new Intent(context, SplashActivity.class);
+        starter.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(starter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

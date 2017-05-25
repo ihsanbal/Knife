@@ -17,11 +17,11 @@ Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</st
     <string name="save">Kaydet</string>
     <string name="title">Başlık</string>
     <string name="cancel">Çıkış</string>
-    <string name="save_message">Saving completed!</string>
+    <string name="save_message">Kaydedildi!</string>
     <string name="profile">Profil</string>
     <string name="collection">Koleksiyon</string>
     <string name="ghost">Hayalet</string>
-    <string name="delete">Delete</string>
+    <string name="delete">Sil</string>
     <string name="reward">Ödül</string>
     <string name="amount">Tutar</string>
 </resources>
