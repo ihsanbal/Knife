@@ -34,6 +34,7 @@ android {
         buildConfigField("String", "TWITTER_SECRET", "\"" + TWITTER_SECRET + "\"")
         buildConfigField("String", "ADMOB_APP_ID", "\"" + ADMOB_APP_ID + "\"")
         buildConfigField("String", "AD_UNIT_ID_INTERSTITIAL", "\"" + AD_UNIT_ID_INTERSTITIAL + "\"")
+        buildConfigField("String", "AD_UNIT_ID_REWARD", "\"" + AD_UNIT_ID_REWARD + "\"")
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

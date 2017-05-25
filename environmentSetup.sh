@@ -56,6 +56,9 @@ function copyEnvVarsToGradleProperties {
         echo "Writing AD_UNIT_ID_INTERSTITIAL to gradle.properties..."
                 echo "AD_UNIT_ID_INTERSTITIAL=$AD_UNIT_ID_INTERSTITIAL" >> ${GRADLE_PROPERTIES}
 
+        echo "Writing AD_UNIT_ID_REWARD to gradle.properties..."
+                echo "AD_UNIT_ID_REWARD=$AD_UNIT_ID_REWARD" >> ${GRADLE_PROPERTIES}
+
         echo "Writing AD_UNIT_ID_BANNER to gradle.properties..."
                 echo "AD_UNIT_ID_BANNER=$AD_UNIT_ID_BANNER" >> ${GRADLE_PROPERTIES}
 }

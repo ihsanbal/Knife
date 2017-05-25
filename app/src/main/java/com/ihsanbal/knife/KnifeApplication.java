@@ -13,11 +13,9 @@ import android.support.multidex.MultiDexApplication;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.google.android.gms.ads.MobileAds;
-import com.ihsanbal.knife.core.Constant;
 import com.ihsanbal.knife.injector.AppComponent;
 import com.ihsanbal.knife.injector.AppModule;
 import com.ihsanbal.knife.injector.DaggerAppComponent;
-import com.ihsanbal.knife.ui.SplashActivity;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 
@@ -39,16 +37,6 @@ public class KnifeApplication extends MultiDexApplication {
         TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.TWITTER_KEY, BuildConfig.TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig), new Answers(), new Crashlytics());
         mDaggerComponent = DaggerAppComponent.builder().appModule(new AppModule()).build();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                if (e instanceof NullPointerException) {
-                    Twitter.getSessionManager().clearActiveSession();
-                    Paper.book().delete(Constant.USER);
-                    SplashActivity.start(getApplicationContext());
-                }
-            }
-        });
     }
 
     public AppComponent getDaggerComponent() {

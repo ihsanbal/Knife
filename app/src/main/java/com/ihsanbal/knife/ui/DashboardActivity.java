@@ -74,14 +74,23 @@ import io.reactivex.schedulers.Schedulers;
 public class DashboardActivity extends CompatBaseActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener, RewardedVideoAdListener, IabBroadcastReceiver.IabBroadcastListener {
 
     private static final String SKU_PREMIUM = "premium";
+    private String payload;
     private ArrayList<Tweet> mTweetList = new ArrayList<>();
     private TimelineAdapter mAdapter;
     private User mUser;
     private RewardedVideoAd mAd;
     private boolean isRewarded;
-    private RewardItem reward;
     private boolean isAdsShow;
+    private RewardItem reward;
     private IabHelper mHelper;
+    private IabBroadcastReceiver mBroadcastReceiver;
+    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener;
+    private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener;
+
+    private KTextView mScreenName;
+    private KTextView mDisplayName;
+    private KTextView mDisplayPremium;
+    private AppCompatImageView mCover;
 
     @Inject
     TwitterSession session;
@@ -113,14 +122,6 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     @BindView(R.id.version_name)
     KTextView mVersionName;
 
-    KTextView mScreenName;
-    KTextView mDisplayName;
-    AppCompatImageView mCover;
-    private IabBroadcastReceiver mBroadcastReceiver;
-    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener;
-    private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener;
-    private String payload;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +139,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
             request.addTestDevice("0C0FC69324CCBEDFE5E27CCD8B6739B9");
             request.addTestDevice("F2EC702D97E2FC94DDABB269E40744B1");
         }
-        mAd.loadAd("ca-app-pub-2838738501361274/3862235935", request.build());
+        mAd.loadAd(BuildConfig.AD_UNIT_ID_REWARD, request.build());
     }
 
     @Override
@@ -233,6 +234,9 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
             public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
                 Purchase premiumPurchase = inventory.getPurchase(SKU_PREMIUM);
                 boolean mIsPremium = (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase));
+                if (mIsPremium) {
+                    mDisplayPremium.setVisibility(View.VISIBLE);
+                }
             }
         };
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
@@ -253,7 +257,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
         mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
             @Override
             public void onIabPurchaseFinished(IabResult result, Purchase info) {
-
+                Snackbar.make(mRecyclerView, info.getDeveloperPayload(), Snackbar.LENGTH_INDEFINITE).show();
             }
         };
         setSupportActionBar(mToolbar);
@@ -273,6 +277,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
         mNavigationView.setNavigationItemSelectedListener(this);
         mScreenName = (KTextView) headerView.findViewById(R.id.screen_name);
         mDisplayName = (KTextView) headerView.findViewById(R.id.display_name);
+        mDisplayPremium = (KTextView) headerView.findViewById(R.id.display_premium);
         mCover = (AppCompatImageView) headerView.findViewById(R.id.profile_cover);
         mSwipeLayout.setOnRefreshListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -432,6 +437,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
                         break;
                     default:
                         try {
+                            mHelper.flagEndAsync();
                             mHelper.launchPurchaseFlow(DashboardActivity.this, SKU_PREMIUM, 10001,
                                     mPurchaseFinishedListener, payload);
                         } catch (IabHelper.IabAsyncInProgressException e) {

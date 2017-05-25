@@ -24,4 +24,5 @@ Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</st
     <string name="delete">Delete</string>
     <string name="reward">Reward</string>
     <string name="amount">Amount</string>
+    <string name="premium">Premium (Subscribe)</string>
 </resources>
