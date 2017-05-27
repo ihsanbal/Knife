@@ -10,6 +10,7 @@ package com.ihsanbal.knife.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
 public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> {
 
     private final ArrayList<FloodModel> items;
+    private View.OnClickListener listener;
 
     public FloodAdapter(ArrayList<FloodModel> items) {
         this.items = items;
@@ -41,7 +43,7 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_flood, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_flood, parent, false), listener);
     }
 
     @Override
@@ -55,6 +57,7 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
         holder.mUserText.setText(item.getTweet());
         holder.mDisplayName.setText(user.screenName);
         holder.mUserName.setText(user.name);
+        holder.mActionView.setTag(position);
         if (item.getType() == TweetActivity.Type.REPLY.ordinal() && items.size() > 1) {
             if (position == 0) {
                 holder.mInReplyLineTop.setVisibility(View.VISIBLE);
@@ -74,6 +77,11 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
             holder.mInReplyLineFull.setVisibility(View.GONE);
             holder.mInReplyLineBottom.setVisibility(View.GONE);
         }
+    }
+
+
+    public void setActionClickListener(View.OnClickListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -104,13 +112,18 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
         @BindView(R.id.in_reply_line_top)
         KTextView mInReplyLineTop;
 
-        ViewHolder(View itemView) {
+        @BindView(R.id.knife_action_view)
+        CardView mActionView;
+
+        ViewHolder(View itemView, View.OnClickListener listener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mActionView.setOnClickListener(listener);
         }
 
         public Context getContext() {
             return itemView.getContext();
         }
+
     }
 }

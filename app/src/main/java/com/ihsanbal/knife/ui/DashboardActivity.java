@@ -152,7 +152,7 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     }
 
     @Override
-    protected int getLayout() {
+    protected int getLayoutResId() {
         return R.layout.activity_dashboard;
     }
 

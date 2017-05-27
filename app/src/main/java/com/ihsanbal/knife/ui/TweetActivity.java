@@ -8,6 +8,7 @@
 
 package com.ihsanbal.knife.ui;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -50,10 +51,14 @@ import com.ihsanbal.knife.tools.TweetUtils;
 import com.ihsanbal.knife.widget.KAppCompatButton;
 import com.ihsanbal.knife.widget.KAutoCompleteEditText;
 import com.ihsanbal.knife.widget.KTextView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.twitter.Validator;
+import com.twitter.sdk.android.core.models.Media;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.models.User;
+import com.twitter.sdk.android.tweetcomposer.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -68,6 +73,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
 
 /**
  * @author ihsan on 09/04/2017.
@@ -88,6 +97,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     private TypeText typed;
     private String screenName;
     private int count;
+    private int position;
     private Validator validator;
 
     @Inject
@@ -271,6 +281,37 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         validator = new Validator();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new FloodAdapter(list);
+        mAdapter.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                position = (int) v.getTag();
+                new RxPermissions(TweetActivity.this)
+                        .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .subscribe(new Observer<Boolean>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(Boolean value) {
+                                if (value) {
+                                    EasyImage.openGallery(TweetActivity.this, 1001);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mTweetText.addTextChangedListener(this);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -333,7 +374,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     }
 
     @Override
-    protected int getLayout() {
+    protected int getLayoutResId() {
         return R.layout.activity_tweet;
     }
 
@@ -345,6 +386,52 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         } else {
             callUpdateStatus(list);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+
+            }
+
+            @Override
+            public void onImagePicked(File file, EasyImage.ImageSource imageSource, int i) {
+                uploadMedia(file, position);
+            }
+
+        });
+    }
+
+    private void uploadMedia(File file, final int position) {
+        String mimeType = FileUtils.getMimeType(file);
+        RequestBody media = RequestBody.create(MediaType.parse(mimeType), file);
+        api.upload(media, null, null)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Media>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Media value) {
+                        list.get(position).setMedias(value.mediaId);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void saveFlood() {
@@ -411,7 +498,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                 .flatMap(new Function<FloodModel, ObservableSource<Tweet>>() {
                     @Override
                     public ObservableSource<Tweet> apply(FloodModel s) throws Exception {
-                        return api.status(s.getTweet(), inReplyStatusId);
+                        return api.status(s.getTweet(), inReplyStatusId, s.getMedias());
                     }
                 })
                 .subscribeOn(Schedulers.io())

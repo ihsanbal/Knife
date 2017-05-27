@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="HardcodedText">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -26,17 +27,12 @@
 
             <com.ihsanbal.knife.widget.KAutoCompleteEditText
                 android:id="@+id/auto.complete"
-                android:layout_width="match_parent"
+                style="@style/tw__EditTweet"
                 android:layout_height="0dp"
-                android:layout_marginBottom="60dp"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
+                android:layout_marginBottom="55dp"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:gravity="top"
-                android:hint="@string/what_is_happening"
                 android:paddingTop="14dp"
-                android:visibility="visible" />
+                android:textColor="@color/colorAccent" />
 
         </LinearLayout>
 

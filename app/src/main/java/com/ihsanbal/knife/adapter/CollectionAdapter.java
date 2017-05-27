@@ -16,6 +16,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
@@ -60,6 +61,7 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
     @Override
     public void onBindParentViewHolder(@NonNull ViewHolder holder, int i, @NonNull FloodCollection item) {
         holder.mTitle.setText(item.getTitle());
+        holder.setItem(item);
         if (item.isCheckable()) {
             holder.mCheckBox.setVisibility(View.VISIBLE);
         } else {
@@ -131,10 +133,11 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
         }
     }
 
-    class ViewHolder extends ParentViewHolder<FloodCollection, FloodModel> {
+    class ViewHolder extends ParentViewHolder<FloodCollection, FloodModel> implements CompoundButton.OnCheckedChangeListener {
 
         private static final float INITIAL_POSITION = 0.0f;
         private static final float ROTATED_POSITION = 90f;
+        private FloodCollection item;
 
         @BindView(R.id.title)
         KTextView mTitle;
@@ -148,6 +151,7 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mCheckBox.setOnCheckedChangeListener(this);
         }
 
         @SuppressLint("NewApi")
@@ -163,6 +167,15 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
 
         public Context getContext() {
             return itemView.getContext();
+        }
+
+        public void setItem(FloodCollection item) {
+            this.item = item;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            item.setChecked(isChecked);
         }
     }
 }
