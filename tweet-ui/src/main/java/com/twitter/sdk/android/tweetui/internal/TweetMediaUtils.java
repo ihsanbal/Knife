@@ -119,12 +119,12 @@ final public class TweetMediaUtils {
         return entity != null && getSupportedVariant(entity) != null;
     }
 
-    static boolean isPhotoType(MediaEntity mediaEntity) {
+    public static boolean isPhotoType(MediaEntity mediaEntity) {
         return PHOTO_TYPE.equals(mediaEntity.type);
 
     }
 
-    static boolean isVideoType(MediaEntity mediaEntity) {
+    public static boolean isVideoType(MediaEntity mediaEntity) {
         return VIDEO_TYPE.equals(mediaEntity.type) || GIF_TYPE.equals(mediaEntity.type);
     }
 

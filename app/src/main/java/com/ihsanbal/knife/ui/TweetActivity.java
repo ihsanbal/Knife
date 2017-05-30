@@ -51,6 +51,7 @@ import com.ihsanbal.knife.tools.TweetUtils;
 import com.ihsanbal.knife.widget.KAppCompatButton;
 import com.ihsanbal.knife.widget.KAutoCompleteEditText;
 import com.ihsanbal.knife.widget.KTextView;
+import com.ihsanbal.knife.widget.MediaView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.twitter.Validator;
 import com.twitter.sdk.android.core.models.Media;
@@ -60,6 +61,7 @@ import com.twitter.sdk.android.tweetcomposer.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -81,7 +83,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 /**
  * @author ihsan on 09/04/2017.
  */
-public class TweetActivity extends CompatBaseActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener, TextWatcher {
+public class TweetActivity extends CompatBaseActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener, TextWatcher, MediaView.OnMediaClickListener {
 
     private static final String TYPE = "tweet:type";
 
@@ -139,6 +141,10 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         Injector.getInstance(this).inject(this);
         toolbar.setNavigationIcon(R.drawable.ic_close);
         toolbar.setNavigationOnClickListener(this);
+        init();
+        getExtras();
+        initMenuItems();
+        requestNewInterstitial();
     }
 
     private void getExtras() {
@@ -154,15 +160,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     break;
             }
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        init();
-        getExtras();
-        initMenuItems();
-        requestNewInterstitial();
     }
 
     @AddTrace(name = "interstitial")
@@ -280,7 +277,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         });
         validator = new Validator();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new FloodAdapter(list);
+        mAdapter = new FloodAdapter(list, this);
         mAdapter.setActionClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -335,7 +332,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     case BottomSheetBehavior.STATE_HIDDEN:
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        if (mInterstitialAd.isLoaded()) {
+                        if (mInterstitialAd.isLoaded() && !BuildConfig.DEBUG) {
                             mInterstitialAd.show();
                         }
                         toggleItems(newState);
@@ -405,7 +402,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         });
     }
 
-    private void uploadMedia(File file, final int position) {
+    private void uploadMedia(final File file, final int position) {
         String mimeType = FileUtils.getMimeType(file);
         RequestBody media = RequestBody.create(MediaType.parse(mimeType), file);
         api.upload(media, null, null)
@@ -420,6 +417,8 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     @Override
                     public void onNext(Media value) {
                         list.get(position).setMedias(value.mediaId);
+                        list.get(position).setMediaPaths(file.getAbsolutePath());
+                        mAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -498,7 +497,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                 .flatMap(new Function<FloodModel, ObservableSource<Tweet>>() {
                     @Override
                     public ObservableSource<Tweet> apply(FloodModel s) throws Exception {
-                        return api.status(s.getTweet(), inReplyStatusId, s.getMedias());
+                        return api.status(s.getTweet(), inReplyStatusId, s.getMediasQuery());
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -616,6 +615,11 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     @Override
     public void afterTextChanged(Editable s) {
         mTweetCount.setText(String.valueOf(validator.getTweetLength(mTweetText.getText().toString())));
+    }
+
+    @Override
+    public void onMediaClick(View view, int index, List<String> entities) {
+        GalleryActivity.start(this, index, entities);
     }
 
     public enum Type {

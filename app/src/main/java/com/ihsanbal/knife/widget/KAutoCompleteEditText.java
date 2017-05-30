@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
 import com.ihsanbal.knife.R;

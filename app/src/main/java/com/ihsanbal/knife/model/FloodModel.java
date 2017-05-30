@@ -8,6 +8,8 @@
 
 package com.ihsanbal.knife.model;
 
+import android.text.TextUtils;
+
 import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
@@ -22,7 +24,8 @@ public class FloodModel {
     private int type;
     private String tweet;
     private User user;
-    private List<Long> medias;
+    private List<Long> medias = new ArrayList<>();
+    private List<String> mediaPaths = new ArrayList<>();
 
     public FloodModel(User user) {
         this.user = user;
@@ -48,13 +51,27 @@ public class FloodModel {
         this.tweet = tweet;
     }
 
+    public void setMediaPaths(String path) {
+        mediaPaths.add(path);
+    }
+
+    public List<String> getMediaPaths() {
+        return mediaPaths;
+    }
+
     public List<Long> getMedias() {
         return medias;
     }
 
-    public void setMedias(Long id) {
-        if (medias == null)
-            medias = new ArrayList<>();
+    public void setMedias(long id) {
         medias.add(id);
+    }
+
+    public String getMediasQuery() {
+        String mediasQuery = "";
+        for (Long id : medias) {
+            mediasQuery += id + ",";
+        }
+        return TextUtils.isEmpty(mediasQuery) ? null : mediasQuery.substring(0, mediasQuery.length() - 1);
     }
 }

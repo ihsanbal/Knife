@@ -55,7 +55,7 @@ public class ApiClient extends TwitterApiClient {
         Observable<User> show(@Query("user_id") long id);
 
         @POST("/1.1/statuses/update.json")
-        Observable<Tweet> status(@Query("status") String status, @Query("in_reply_to_status_id") Long id, @Query("media_ids") List<Long> media_ids);
+        Observable<Tweet> status(@Query("status") String status, @Query("in_reply_to_status_id") Long id, @Query("media_ids") String media_ids);
 
         @Multipart
         @POST("https://upload.twitter.com/1.1/media/upload.json")

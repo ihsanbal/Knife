@@ -128,6 +128,10 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
         Injector.getInstance(this).inject(this);
         init();
         initTweetList();
+        initNativeAds();
+        User user = Paper.book().read(Constant.USER);
+        loadProfile(user);
+        showProfile();
     }
 
     private void initNativeAds() {
@@ -140,15 +144,6 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
             request.addTestDevice("F2EC702D97E2FC94DDABB269E40744B1");
         }
         mAd.loadAd(BuildConfig.AD_UNIT_ID_REWARD, request.build());
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initNativeAds();
-        User user = Paper.book().read(Constant.USER);
-        loadProfile(user);
-        showProfile();
     }
 
     @Override
