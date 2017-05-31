@@ -5,7 +5,8 @@
     <string name="menu_number">Nümerik</string>
     <string name="menu_list">Liste</string>
     <string name="no_res">Metin algılanamadı</string>
-    <string name="warn">Hata!</string>
+    <string name="warn">Uyarı!</string>
+    <string name="error">Hata!</string>
     <string name="warn_message">Tweet listeniz silinecek, emin misiniz?</string>
     <string name="button_yes">Evet</string>
     <string name="button_no">Hayır</string>
@@ -21,4 +22,6 @@
     <string name="delete">Sil</string>
     <string name="reward">Ödül</string>
     <string name="premium">Premium (Üyelik)</string>
+    <string name="media_warn">En fazla dört resim ekleyebilirsiniz.</string>
+    <string name="delete_warn">Koleksiyonu silmek istediğinize emin misiniz?</string>
 </resources>

@@ -396,7 +396,10 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
 
             @Override
             public void onImagePicked(File file, EasyImage.ImageSource imageSource, int i) {
-                uploadMedia(file, position);
+                if (list.get(position).getMedias().size() < 3)
+                    uploadMedia(file, position);
+                else
+                    Snackbar.make(mRecyclerView, R.string.media_warn, Snackbar.LENGTH_LONG).show();
             }
 
         });
@@ -457,7 +460,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                             Toast.makeText(getApplicationContext(), R.string.save_message, Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
-                            Snackbar.make(mRecyclerView, R.string.warn, Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(mRecyclerView, R.string.error, Snackbar.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -556,7 +559,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
             @Override
             public void run() {
                 mTweetButton.setEnabled(true);
-                Toast.makeText(TweetActivity.this, message != null ? message : getString(R.string.warn), Toast.LENGTH_LONG).show();
+                Toast.makeText(TweetActivity.this, message != null ? message : getString(R.string.error), Toast.LENGTH_LONG).show();
             }
         });
     }

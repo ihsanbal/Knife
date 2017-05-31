@@ -10,6 +10,9 @@ package com.ihsanbal.knife.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +22,12 @@ import android.view.ViewGroup;
 
 import com.ihsanbal.knife.R;
 import com.ihsanbal.knife.model.FloodModel;
+import com.ihsanbal.knife.tools.TweetUtils;
 import com.ihsanbal.knife.ui.TweetActivity;
 import com.ihsanbal.knife.widget.KTextView;
 import com.ihsanbal.knife.widget.MediaView;
+import com.luseen.autolinklibrary.AutoLinkMode;
+import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.models.User;
 import com.twitter.sdk.android.tweetui.internal.AspectRatioFrameLayout;
@@ -59,7 +65,7 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
                 .fit()
                 .into(holder.mProfile);
         User user = items.get(position).getUser();
-        holder.mUserText.setText(item.getTweet());
+        holder.mUserText.setAutoLinkText(item.getTweet());
         holder.mDisplayName.setText(user.screenName);
         holder.mUserName.setText(user.name);
         holder.mActionView.setTag(position);
@@ -144,6 +150,25 @@ public class FloodAdapter extends RecyclerView.Adapter<FloodAdapter.ViewHolder> 
             ButterKnife.bind(this, itemView);
             mActionView.setOnClickListener(listener);
             mMediaView.setOnMediaClickListener(mediaClickListener);
+            mUserText.addAutoLinkMode(AutoLinkMode.MODE_URL, AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_MENTION);
+            mUserText.setUrlModeColor(ContextCompat.getColor(getContext(), R.color.colorStart));
+            mUserText.setHashtagModeColor(ContextCompat.getColor(getContext(), R.color.colorStart));
+            mUserText.setMentionModeColor(ContextCompat.getColor(getContext(), R.color.colorStart));
+            mUserText.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
+                @Override
+                public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, final String s) {
+                    if (autoLinkMode.toString().equalsIgnoreCase("url")) {
+                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                        builder.setShowTitle(true)
+                                .addDefaultShareMenuItem()
+                                .setToolbarColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+                        CustomTabsIntent intent = builder.build();
+                        intent.launchUrl(getContext(), Uri.parse(s));
+                    } else if (autoLinkMode.toString().equalsIgnoreCase("mention")) {
+                        TweetUtils.showProfile(getContext(), s.replace("@", ""));
+                    }
+                }
+            });
         }
 
         public Context getContext() {

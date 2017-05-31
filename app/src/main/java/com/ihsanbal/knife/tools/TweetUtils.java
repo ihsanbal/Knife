@@ -21,7 +21,6 @@ import java.util.ArrayList;
 /**
  * @author ihsan on 22/04/2017.
  */
-
 public class TweetUtils {
     public static ArrayList<FloodModel> formatTweetList(String tweet, User user, int type, String screenName) {
         String[] split = tweet.split(" |\\\\.|\\\\,|\\\\;");
@@ -93,4 +92,5 @@ public class TweetUtils {
     public static void showProfile(Context context, String screenName) {
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/" + screenName)));
     }
+
 }

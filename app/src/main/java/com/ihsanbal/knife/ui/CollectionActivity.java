@@ -101,13 +101,15 @@ public class CollectionActivity extends CompatBaseActivity implements View.OnCli
         }
         if (hasChecked) {
             new AlertDialog.Builder(this)
+                    .setMessage(R.string.delete_warn)
                     .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Paper.book().write(Constant.COLLECTION, clearList);
                             collections.clear();
                             collections.addAll(clearList);
-                            mAdapter.notifyDataSetChanged();
+                            mAdapter = new CollectionAdapter(collections);
+                            mRecyclerView.setAdapter(mAdapter);
                         }
                     })
                     .setNegativeButton(R.string.button_no, new DialogInterface.OnClickListener() {

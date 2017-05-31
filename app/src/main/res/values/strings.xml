@@ -5,8 +5,9 @@
     <string name="menu_number">Number</string>
     <string name="menu_list">List</string>
     <string name="no_res">Metin algılanamadı</string>
-    <string name="warn">Warn!</string>
-    <string name="warn_message">Your tweet flood will clear, are you sure?</string>
+    <string name="warn">Warning!</string>
+    <string name="error">Error!</string>
+    <string name="warn_message">Your tweet flood will delete, are you sure?</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
     <string name="complete">Completed</string>
@@ -21,4 +22,6 @@
     <string name="delete">Delete</string>
     <string name="reward">Reward</string>
     <string name="premium">Premium (Subscribe)</string>
+    <string name="media_warn">Maximum four image can added.</string>
+    <string name="delete_warn">Your collection will delete, are you sure?</string>
 </resources>
