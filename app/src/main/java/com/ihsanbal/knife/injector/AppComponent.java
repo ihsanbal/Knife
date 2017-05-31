@@ -28,4 +28,5 @@ public interface AppComponent {
     void inject(TweetActivity activity);
 
     void inject(CollectionActivity activity);
+
 }

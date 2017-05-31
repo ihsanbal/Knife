@@ -15,6 +15,7 @@
             android:title="@string/collection" />
         <item
             android:id="@+id/menu.ghost"
-            android:title="@string/ghost" />
+            android:title="@string/ghost"
+            android:visible="false" />
     </group>
 </menu>

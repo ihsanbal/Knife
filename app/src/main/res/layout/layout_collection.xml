@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="14dp"
-    android:minHeight="50dp"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatCheckBox
-        android:id="@+id/checkbox"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_margin="4dp"
-        android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:minHeight="50dp"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="4dp"
+            android:visibility="invisible" />
+
+        <com.ihsanbal.knife.widget.KTextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="14dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorAccent"
+            android:textSize="17sp"
+            app:font="bold"
+            tools:ignore="RtlHardcoded"
+            tools:text="Collection (one)" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/icon.arrow"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_arrow" />
+
+    </LinearLayout>
 
     <com.ihsanbal.knife.widget.KTextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center_vertical" />
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/icon.arrow"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_arrow" />
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:alpha="0.5"
+        android:background="@color/colorAccent" />
 
 </LinearLayout>

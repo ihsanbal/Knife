@@ -10,12 +10,16 @@ package com.ihsanbal.knife.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
@@ -23,8 +27,11 @@ import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 import com.ihsanbal.knife.R;
 import com.ihsanbal.knife.model.FloodCollection;
 import com.ihsanbal.knife.model.FloodModel;
+import com.ihsanbal.knife.tools.TweetUtils;
 import com.ihsanbal.knife.ui.TweetActivity;
 import com.ihsanbal.knife.widget.KTextView;
+import com.luseen.autolinklibrary.AutoLinkMode;
+import com.luseen.autolinklibrary.AutoLinkOnClickListener;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.core.models.User;
 
@@ -60,6 +67,7 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
     @Override
     public void onBindParentViewHolder(@NonNull ViewHolder holder, int i, @NonNull FloodCollection item) {
         holder.mTitle.setText(item.getTitle());
+        holder.setItem(item);
         if (item.isCheckable()) {
             holder.mCheckBox.setVisibility(View.VISIBLE);
         } else {
@@ -74,7 +82,7 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
                 .fit()
                 .into(holder.mProfile);
         User user = item.getUser();
-        holder.mUserText.setText(item.getTweet());
+        holder.mUserText.setAutoLinkText(item.getTweet());
         holder.mDisplayName.setText(user.screenName);
         holder.mUserName.setText(user.name);
         if (item.getType() == TweetActivity.Type.REPLY.ordinal() && items.get(position).getFloodList().size() > 1) {
@@ -121,9 +129,32 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
         @BindView(R.id.in_reply_line_top)
         KTextView mInReplyLineTop;
 
+        @BindView(R.id.media_action_view)
+        AppCompatImageView mMediaActionView;
+
         ViewChildHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mMediaActionView.setVisibility(View.GONE);
+            mUserText.addAutoLinkMode(AutoLinkMode.MODE_URL, AutoLinkMode.MODE_HASHTAG, AutoLinkMode.MODE_MENTION);
+            mUserText.setUrlModeColor(ContextCompat.getColor(getContext(), R.color.colorStart));
+            mUserText.setHashtagModeColor(ContextCompat.getColor(getContext(), R.color.colorStart));
+            mUserText.setMentionModeColor(ContextCompat.getColor(getContext(), R.color.colorStart));
+            mUserText.setAutoLinkOnClickListener(new AutoLinkOnClickListener() {
+                @Override
+                public void onAutoLinkTextClick(AutoLinkMode autoLinkMode, final String s) {
+                    if (autoLinkMode.toString().equalsIgnoreCase("url")) {
+                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                        builder.setShowTitle(true)
+                                .addDefaultShareMenuItem()
+                                .setToolbarColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+                        CustomTabsIntent intent = builder.build();
+                        intent.launchUrl(getContext(), Uri.parse(s));
+                    } else if (autoLinkMode.toString().equalsIgnoreCase("mention")) {
+                        TweetUtils.showProfile(getContext(), s.replace("@", ""));
+                    }
+                }
+            });
         }
 
         public Context getContext() {
@@ -131,10 +162,11 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
         }
     }
 
-    class ViewHolder extends ParentViewHolder<FloodCollection, FloodModel> {
+    class ViewHolder extends ParentViewHolder<FloodCollection, FloodModel> implements CompoundButton.OnCheckedChangeListener {
 
         private static final float INITIAL_POSITION = 0.0f;
         private static final float ROTATED_POSITION = 90f;
+        private FloodCollection item;
 
         @BindView(R.id.title)
         KTextView mTitle;
@@ -148,6 +180,7 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mCheckBox.setOnCheckedChangeListener(this);
         }
 
         @SuppressLint("NewApi")
@@ -163,6 +196,15 @@ public class CollectionAdapter extends ExpandableRecyclerAdapter<FloodCollection
 
         public Context getContext() {
             return itemView.getContext();
+        }
+
+        public void setItem(FloodCollection item) {
+            this.item = item;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            item.setChecked(isChecked);
         }
     }
 }

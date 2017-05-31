@@ -33,11 +33,11 @@ import java.io.File;
 /**
  * Utilities for resolving various Uri's to file paths and MIME types.
  */
-class FileUtils {
+public class FileUtils {
     private static final String MEDIA_SCHEME = "com.android.providers.media.documents";
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    static String getPath(final Context context, final Uri uri) {
+    public static String getPath(final Context context, final Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         if (isKitKat && isMediaDocumentAuthority(uri)) {
             final String documentId = DocumentsContract.getDocumentId(uri); // e.g. "image:1234"
@@ -98,7 +98,7 @@ class FileUtils {
     /**
      * @return The MIME type for the given file.
      */
-    static String getMimeType(File file) {
+    public static String getMimeType(File file) {
         final String ext = getExtension(file.getName());
         if (!TextUtils.isEmpty(ext)) {
             return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);

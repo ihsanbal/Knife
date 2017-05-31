@@ -23,8 +23,7 @@
         <com.ihsanbal.knife.widget.KTextView
             android:id="@+id/screen.name"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:alpha="0.7"
             android:gravity="center_vertical"
             android:shadowColor="@color/colorAccent"
@@ -36,21 +35,46 @@
             app:font="bold"
             tools:text="\@sampleapp_" />
 
-        <com.ihsanbal.knife.widget.KTextView
-            android:id="@+id/display.name"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:alpha="0.7"
-            android:gravity="center_vertical"
-            android:shadowColor="@color/colorAccent"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            app:font="light"
-            tools:text="ihsan BAL" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/display.name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:alpha="0.7"
+                android:gravity="center_vertical"
+                android:shadowColor="@color/colorAccent"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:font="light"
+                tools:ignore="NestedWeights"
+                tools:text="ihsan BAL" />
+
+            <com.ihsanbal.knife.widget.KTextView
+                android:id="@+id/display.premium"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:alpha="0.7"
+                android:gravity="center_vertical|end"
+                android:shadowColor="@color/colorAccent"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/premium"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:visibility="invisible"
+                app:font="bold"
+                tools:text="Premium (Subscribe)" />
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

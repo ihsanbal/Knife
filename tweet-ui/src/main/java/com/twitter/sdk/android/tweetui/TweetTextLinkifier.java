@@ -32,7 +32,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-final class TweetTextLinkifier {
+public final class TweetTextLinkifier {
     static final Pattern QUOTED_STATUS_URL =
             Pattern.compile("^https?://twitter\\.com(/#!)?/\\w+/status/\\d+$");
     static final Pattern VINE_URL =
@@ -53,7 +53,7 @@ final class TweetTextLinkifier {
      * @param stripVineCard         If true we should strip the Vine card URL
      * @return                      The Tweet text with displayUrls substituted in
      */
-    static CharSequence linkifyUrls(FormattedTweetText tweetText, final LinkClickListener listener,
+    public static CharSequence linkifyUrls(FormattedTweetText tweetText, final LinkClickListener listener,
                                     final int linkColor, final int linkHighlightColor,
                                     boolean stripQuoteTweet, boolean stripVineCard) {
         if (tweetText == null) return null;

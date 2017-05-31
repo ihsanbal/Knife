@@ -37,7 +37,7 @@ import java.util.List;
  */
 @DependsOn(TwitterCore.class)
 public class TweetUi extends Kit<Boolean> {
-    static final String LOGTAG = "TweetUi";
+    public static final String LOGTAG = "TweetUi";
     static final String NOT_STARTED_ERROR = "Must start TweetUi Kit in Fabric.with().";
 
     private static final String KIT_SCRIBE_NAME = "TweetUi";

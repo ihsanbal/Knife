@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur semper urna eget viverra scelerisque. Ut tristique nulla eget lorem accumsan lacinia. Integer mattis, tellus sit amet fermentum vulputate, quam dolor luctus felis, in feugiat quam quam vitae justo. Nullam lobortis risus enim, sed volutpat turpis imperdiet vel. Vestibulum feugiat lectus sit amet orci sagittis, vel posuere purus aliquam. Nunc vulputate euismod erat laoreet eleifend. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vitae neque pulvinar, blandit odio sed, consectetur nulla. Proin in ullamcorper felis. Etiam commodo risus sed est elementum, a condimentum mi varius. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam egestas ultrices iaculis. Integer ex leo, condimentum vel imperdiet tincidunt, tempor aliquam orci. Morbi sagittis enim eu tortor ultrices, vel rutrum massa facilisis.
-Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</string>
-    <string name="what_is_happening">What\'s happening?</string>
-    <string name="time_line">Timeline</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur semper urna eget viverra scelerisque. Ut tristique nulla eget lorem accumsan lacinia. Integer mattis, tellus sit amet fermentum vulputate, quam dolor luctus felis, in feugiat quam quam vitae justo.</string>
     <string name="menu_reply">In Reply</string>
     <string name="menu_number">Number</string>
     <string name="menu_list">List</string>
     <string name="no_res">Metin algılanamadı</string>
-    <string name="warn">Warn!</string>
-    <string name="warn_message">Your tweet flood will clear, are you sure?</string>
+    <string name="warn">Warning!</string>
+    <string name="error">Error!</string>
+    <string name="warn_message">Your tweet flood will delete, are you sure?</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
     <string name="complete">Completed</string>
@@ -23,5 +21,7 @@ Nam vitae mauris justo. In varius neque dui, nec elementum urna rhoncus non.</st
     <string name="ghost">Ghost</string>
     <string name="delete">Delete</string>
     <string name="reward">Reward</string>
-    <string name="amount">Amount</string>
+    <string name="premium">Premium (Subscribe)</string>
+    <string name="media_warn">Maximum four image can added.</string>
+    <string name="delete_warn">Your collection will delete, are you sure?</string>
 </resources>

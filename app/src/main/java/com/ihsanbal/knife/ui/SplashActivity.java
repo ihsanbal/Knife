@@ -47,11 +47,6 @@ public class SplashActivity extends AppCompatActivity implements AnimatedSvgView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         initTwitterLogin();
         initSVG();
     }

@@ -28,7 +28,7 @@ public abstract class CompatBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getLayout());
+        setContentView(getLayoutResId());
         ButterKnife.bind(this);
         mAnalytics = FirebaseAnalytics.getInstance(this);
     }
@@ -43,6 +43,6 @@ public abstract class CompatBaseActivity extends AppCompatActivity {
 
     protected abstract
     @LayoutRes
-    int getLayout();
+    int getLayoutResId();
 
 }

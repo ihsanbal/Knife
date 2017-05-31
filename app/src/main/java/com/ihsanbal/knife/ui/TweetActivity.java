@@ -8,6 +8,7 @@
 
 package com.ihsanbal.knife.ui;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -50,11 +51,17 @@ import com.ihsanbal.knife.tools.TweetUtils;
 import com.ihsanbal.knife.widget.KAppCompatButton;
 import com.ihsanbal.knife.widget.KAutoCompleteEditText;
 import com.ihsanbal.knife.widget.KTextView;
+import com.ihsanbal.knife.widget.MediaView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.twitter.Validator;
+import com.twitter.sdk.android.core.models.Media;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.models.User;
+import com.twitter.sdk.android.tweetcomposer.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -68,11 +75,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
 
 /**
  * @author ihsan on 09/04/2017.
  */
-public class TweetActivity extends CompatBaseActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener, TextWatcher {
+public class TweetActivity extends CompatBaseActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener, TextWatcher, MediaView.OnMediaClickListener {
 
     private static final String TYPE = "tweet:type";
 
@@ -88,6 +99,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     private TypeText typed;
     private String screenName;
     private int count;
+    private int position;
     private Validator validator;
 
     @Inject
@@ -129,6 +141,10 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         Injector.getInstance(this).inject(this);
         toolbar.setNavigationIcon(R.drawable.ic_close);
         toolbar.setNavigationOnClickListener(this);
+        init();
+        getExtras();
+        initMenuItems();
+        requestNewInterstitial();
     }
 
     private void getExtras() {
@@ -144,15 +160,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     break;
             }
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        init();
-        getExtras();
-        initMenuItems();
-        requestNewInterstitial();
     }
 
     @AddTrace(name = "interstitial")
@@ -270,7 +277,38 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         });
         validator = new Validator();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new FloodAdapter(list);
+        mAdapter = new FloodAdapter(list, this);
+        mAdapter.setActionClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                position = (int) v.getTag();
+                new RxPermissions(TweetActivity.this)
+                        .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .subscribe(new Observer<Boolean>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(Boolean value) {
+                                if (value) {
+                                    EasyImage.openGallery(TweetActivity.this, 1001);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mTweetText.addTextChangedListener(this);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -294,7 +332,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     case BottomSheetBehavior.STATE_HIDDEN:
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        if (mInterstitialAd.isLoaded()) {
+                        if (mInterstitialAd.isLoaded() && !BuildConfig.DEBUG) {
                             mInterstitialAd.show();
                         }
                         toggleItems(newState);
@@ -333,7 +371,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     }
 
     @Override
-    protected int getLayout() {
+    protected int getLayoutResId() {
         return R.layout.activity_tweet;
     }
 
@@ -345,6 +383,57 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         } else {
             callUpdateStatus(list);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+
+            }
+
+            @Override
+            public void onImagePicked(File file, EasyImage.ImageSource imageSource, int i) {
+                if (list.get(position).getMedias().size() < 3)
+                    uploadMedia(file, position);
+                else
+                    Snackbar.make(mRecyclerView, R.string.media_warn, Snackbar.LENGTH_LONG).show();
+            }
+
+        });
+    }
+
+    private void uploadMedia(final File file, final int position) {
+        String mimeType = FileUtils.getMimeType(file);
+        RequestBody media = RequestBody.create(MediaType.parse(mimeType), file);
+        api.upload(media, null, null)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Media>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Media value) {
+                        list.get(position).setMedias(value.mediaId);
+                        list.get(position).setMediaPaths(file.getAbsolutePath());
+                        mAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void saveFlood() {
@@ -371,7 +460,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                             Toast.makeText(getApplicationContext(), R.string.save_message, Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
-                            Snackbar.make(mRecyclerView, R.string.warn, Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(mRecyclerView, R.string.error, Snackbar.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -411,7 +500,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                 .flatMap(new Function<FloodModel, ObservableSource<Tweet>>() {
                     @Override
                     public ObservableSource<Tweet> apply(FloodModel s) throws Exception {
-                        return api.status(s.getTweet(), inReplyStatusId);
+                        return api.status(s.getTweet(), inReplyStatusId, s.getMediasQuery());
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -470,7 +559,7 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
             @Override
             public void run() {
                 mTweetButton.setEnabled(true);
-                Toast.makeText(TweetActivity.this, message != null ? message : getString(R.string.warn), Toast.LENGTH_LONG).show();
+                Toast.makeText(TweetActivity.this, message != null ? message : getString(R.string.error), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -529,6 +618,11 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     @Override
     public void afterTextChanged(Editable s) {
         mTweetCount.setText(String.valueOf(validator.getTweetLength(mTweetText.getText().toString())));
+    }
+
+    @Override
+    public void onMediaClick(View view, int index, List<String> entities) {
+        GalleryActivity.start(this, index, entities);
     }
 
     public enum Type {

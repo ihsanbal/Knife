@@ -15,12 +15,13 @@ import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
 import com.ihsanbal.knife.R;
+import com.luseen.autolinklibrary.AutoLinkTextView;
 
 /**
  * @author ihsan on 08/04/2017.
  */
 
-public class KTextView extends AppCompatTextView {
+public class KTextView extends AutoLinkTextView {
 
     public KTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
