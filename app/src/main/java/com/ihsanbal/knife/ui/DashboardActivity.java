@@ -454,13 +454,13 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     public void onResume() {
         super.onResume();
         if (isRewarded && reward != null) {
-            Snackbar.make(mRecyclerView, getString(R.string.reward) + " : " + reward.getAmount() + " " + reward.getType(),
-                    Snackbar.LENGTH_LONG).setAction(R.string.reward, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            }).show();
+//            Snackbar.make(mRecyclerView, getString(R.string.reward) + " : " + reward.getAmount() + " " + reward.getType(),
+//                    Snackbar.LENGTH_LONG).setAction(R.string.reward, new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                }
+//            }).show();
             reward = null;
         }
     }
