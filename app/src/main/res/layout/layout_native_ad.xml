@@ -9,10 +9,10 @@
     android:layout_marginRight="15dp"
     tools:ignore="RtlHardcoded">
 
-    <com.google.android.gms.ads.NativeExpressAdView
-        android:id="@+id/adView"
-        android:layout_width="320dp"
-        android:layout_height="50dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/ad_unit_id_banner" />
+    <!--<com.google.android.gms.ads.NativeExpressAdView-->
+        <!--android:id="@+id/adView"-->
+        <!--android:layout_width="320dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--ads:adSize="BANNER"-->
+        <!--ads:adUnitId="@string/ad_unit_id_banner" />-->
 </android.support.v7.widget.CardView>

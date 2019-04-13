@@ -32,11 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.perf.metrics.AddTrace;
-import com.ihsanbal.knife.BuildConfig;
 import com.ihsanbal.knife.R;
 import com.ihsanbal.knife.adapter.FloodAdapter;
 import com.ihsanbal.knife.api.ApiClient;
@@ -90,7 +86,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     private FloodAdapter mAdapter;
     private ArrayList<FloodModel> list = new ArrayList<>();
     private BottomSheetBehavior<View> mBehavior;
-    private InterstitialAd mInterstitialAd;
     private Long inReplyStatusId = null;
     private Type mType = Type.LIST;
     private ValueAnimator animFit;
@@ -144,7 +139,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
         init();
         getExtras();
         initMenuItems();
-        requestNewInterstitial();
     }
 
     private void getExtras() {
@@ -160,18 +154,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     break;
             }
         }
-    }
-
-    @AddTrace(name = "interstitial")
-    private void requestNewInterstitial() {
-        logEvent("interstitial", "request", "start");
-        AdRequest.Builder request = new AdRequest.Builder();
-        if (BuildConfig.DEBUG) {
-            request.addTestDevice("7D376E3F676EDD395AB09C5FB3940F34");
-            request.addTestDevice("0C0FC69324CCBEDFE5E27CCD8B6739B9");
-            request.addTestDevice("F2EC702D97E2FC94DDABB269E40744B1");
-        }
-        mInterstitialAd.loadAd(request.build());
     }
 
     @AddTrace(name = "share")
@@ -247,34 +229,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
     }
 
     private void init() {
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(BuildConfig.AD_UNIT_ID_INTERSTITIAL);
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                logEvent("interstitial", "action", "closed");
-                mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                calculateTweetFlood();
-            }
-
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                logEvent("interstitial", "request", "failed");
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                logEvent("interstitial", "request", "loaded");
-            }
-
-            @Override
-            public void onAdOpened() {
-                super.onAdOpened();
-                logEvent("interstitial", "action", "opened");
-            }
-        });
         validator = new Validator();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new FloodAdapter(list, this);
@@ -332,9 +286,6 @@ public class TweetActivity extends CompatBaseActivity implements View.OnClickLis
                     case BottomSheetBehavior.STATE_HIDDEN:
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        if (mInterstitialAd.isLoaded() && !BuildConfig.DEBUG) {
-                            mInterstitialAd.show();
-                        }
                         toggleItems(newState);
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:

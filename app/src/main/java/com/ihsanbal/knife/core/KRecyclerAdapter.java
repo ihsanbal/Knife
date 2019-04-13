@@ -13,15 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoOptions;
-import com.ihsanbal.knife.BuildConfig;
-import com.ihsanbal.knife.R;
-
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -74,16 +67,6 @@ public abstract class KRecyclerAdapter<T extends RecyclerView.ViewHolder, E> ext
                 break;
             default:
                 ViewAdHolder h = (ViewAdHolder) holder;
-                AdRequest.Builder request = new AdRequest.Builder();
-                if (BuildConfig.DEBUG) {
-                    request.addTestDevice("7D376E3F676EDD395AB09C5FB3940F34");
-                    request.addTestDevice("0C0FC69324CCBEDFE5E27CCD8B6739B9");
-                    request.addTestDevice("F2EC702D97E2FC94DDABB269E40744B1");
-                }
-                h.mAdView.setVideoOptions(new VideoOptions.Builder()
-                        .setStartMuted(true)
-                        .build());
-                h.mAdView.loadAd(request.build());
                 break;
         }
     }
@@ -95,9 +78,6 @@ public abstract class KRecyclerAdapter<T extends RecyclerView.ViewHolder, E> ext
     }
 
     protected class ViewAdHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.adView)
-        NativeExpressAdView mAdView;
 
         public ViewAdHolder(View itemView) {
             super(itemView);

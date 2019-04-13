@@ -9,7 +9,6 @@ def buildVersionName = "1.0.2"
 
 android {
     compileSdkVersion 28
-    //noinspection GradleDependency
     buildToolsVersion "28.0.3"
 
     playAccountConfigs {
@@ -112,9 +111,8 @@ dependencies {
     def loggerInterceptorVersion = "2.0.0"
     def paperDBVersion = "2.0"
     def svgVersion = "1.0.2"
-    def firebaseVersion = '16.0.8'
-    def firebaseVersion3 = '16.2.5'
-    def firebaseVersion2 = '17.2.0'
+    def firebaseCoreVersion = '16.0.8'
+    def fireBasePref = '16.2.5'
     def daggerVersion = "2.10-rc2"
 
     api fileTree(dir: 'libs', include: ['*.jar'])
@@ -123,9 +121,8 @@ dependencies {
     api project(':twitter-core')
     api project(':twitter')
 
-    api "com.google.firebase:firebase-core:$firebaseVersion"
-    api "com.google.firebase:firebase-ads:$firebaseVersion2"
-    api "com.google.firebase:firebase-perf:$firebaseVersion3"
+    api "com.google.firebase:firebase-core:$firebaseCoreVersion"
+    api "com.google.firebase:firebase-perf:$fireBasePref"
 
     api "com.google.dagger:dagger:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"

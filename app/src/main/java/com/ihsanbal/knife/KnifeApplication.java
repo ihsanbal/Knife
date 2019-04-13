@@ -12,7 +12,6 @@ import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
-import com.google.android.gms.ads.MobileAds;
 import com.ihsanbal.knife.injector.AppComponent;
 import com.ihsanbal.knife.injector.AppModule;
 import com.ihsanbal.knife.injector.DaggerAppComponent;
@@ -33,7 +32,6 @@ public class KnifeApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Paper.init(this);
-        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
         TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.TWITTER_KEY, BuildConfig.TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig), new Answers(), new Crashlytics());
         mDaggerComponent = DaggerAppComponent.builder().appModule(new AppModule()).build();

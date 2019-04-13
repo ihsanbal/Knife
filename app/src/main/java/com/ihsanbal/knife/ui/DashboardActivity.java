@@ -27,11 +27,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.reward.RewardItem;
-import com.google.android.gms.ads.reward.RewardedVideoAd;
-import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.perf.metrics.AddTrace;
 import com.ihsanbal.knife.BuildConfig;
 import com.ihsanbal.knife.R;
@@ -71,17 +66,15 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author ihsan on 03/04/2017.
  */
-public class DashboardActivity extends CompatBaseActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener, RewardedVideoAdListener, IabBroadcastReceiver.IabBroadcastListener {
+public class DashboardActivity extends CompatBaseActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener, IabBroadcastReceiver.IabBroadcastListener {
 
     private static final String SKU_PREMIUM = "premium";
     private String payload;
     private ArrayList<Tweet> mTweetList = new ArrayList<>();
     private TimelineAdapter mAdapter;
     private User mUser;
-    private RewardedVideoAd mAd;
     private boolean isRewarded;
     private boolean isAdsShow;
-    private RewardItem reward;
     private IabHelper mHelper;
     private IabBroadcastReceiver mBroadcastReceiver;
     private IabHelper.QueryInventoryFinishedListener mGotInventoryListener;
@@ -128,22 +121,9 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
         Injector.getInstance(this).inject(this);
         init();
         initTweetList();
-        initNativeAds();
         User user = Paper.book().read(Constant.USER);
         loadProfile(user);
         showProfile();
-    }
-
-    private void initNativeAds() {
-        mAd = MobileAds.getRewardedVideoAdInstance(this);
-        mAd.setRewardedVideoAdListener(this);
-        AdRequest.Builder request = new AdRequest.Builder();
-        if (BuildConfig.DEBUG) {
-            request.addTestDevice("7D376E3F676EDD395AB09C5FB3940F34");
-            request.addTestDevice("0C0FC69324CCBEDFE5E27CCD8B6739B9");
-            request.addTestDevice("F2EC702D97E2FC94DDABB269E40744B1");
-        }
-        mAd.loadAd(BuildConfig.AD_UNIT_ID_REWARD, request.build());
     }
 
     @Override
@@ -442,65 +422,6 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
                 }
             }
         }, 300);
-    }
-
-    @Override
-    public void onRewarded(RewardItem reward) {
-        isRewarded = true;
-        this.reward = reward;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isRewarded && reward != null) {
-//            Snackbar.make(mRecyclerView, getString(R.string.reward) + " : " + reward.getAmount() + " " + reward.getType(),
-//                    Snackbar.LENGTH_LONG).setAction(R.string.reward, new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                }
-//            }).show();
-            reward = null;
-        }
-    }
-
-    @Override
-    public void onRewardedVideoAdLeftApplication() {
-
-    }
-
-    @Override
-    public void onRewardedVideoAdClosed() {
-
-    }
-
-    @Override
-    public void onRewardedVideoAdFailedToLoad(int errorCode) {
-
-    }
-
-    @Override
-    public void onRewardedVideoCompleted() {
-
-    }
-
-    @Override
-    public void onRewardedVideoAdLoaded() {
-        if (mAd.isLoaded() && !isAdsShow && !BuildConfig.DEBUG) {
-            isAdsShow = true;
-            mAd.show();
-        }
-    }
-
-    @Override
-    public void onRewardedVideoAdOpened() {
-
-    }
-
-    @Override
-    public void onRewardedVideoStarted() {
-
     }
 
     @Override
