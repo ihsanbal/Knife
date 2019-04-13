@@ -74,29 +74,29 @@ android {
 }
 
 dependencies {
-    compile dependency.fabric
-    compile dependency.retrofit
-    compile dependency.retrofitGsonConverter
-    compile dependency.gson
-    compile dependency.okHttp
+    api dependency.fabric
+    api dependency.retrofit
+    api dependency.retrofitGsonConverter
+    api dependency.gson
+    api dependency.okHttp
 
-    androidTestCompile dependency.mockito
-    androidTestCompile dependency.dexmakerMockito
-    androidTestCompile dependency.fabricTest
-    androidTestCompile (dependency.junitAddons) {
+    androidTestImplementation dependency.mockito
+    androidTestImplementation dependency.dexmakerMockito
+    androidTestImplementation dependency.fabricTest
+    androidTestImplementation (dependency.junitAddons) {
         transitive = false
     }
 
-    testCompile dependency.fabricTest
-    testCompile dependency.mockito
-    testCompile dependency.junit
-    testCompile dependency.retrofitMock
-    testCompile(dependency.robolectric) {
+    testImplementation dependency.fabricTest
+    testImplementation dependency.mockito
+    testImplementation dependency.junit
+    testImplementation dependency.retrofitMock
+    testImplementation(dependency.robolectric) {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    testCompile (dependency.junitAddons) {
+    testImplementation (dependency.junitAddons) {
         transitive = false
     }
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 }

@@ -66,25 +66,25 @@ android {
 }
 
 dependencies {
-    compile project(':twitter-core')
+    api project(':twitter-core')
 
-    compile dependency.fabric
-    compile dependency.picasso
-    compile dependency.supportV4
+    api dependency.fabric
+    api dependency.picasso
+    api dependency.supportV4
 
-    androidTestCompile dependency.retrofitMock
-    androidTestCompile dependency.mockito
-    androidTestCompile dependency.dexmakerMockito
-    androidTestCompile dependency.fabricTest
+    androidTestImplementation dependency.retrofitMock
+    androidTestImplementation dependency.mockito
+    androidTestImplementation dependency.dexmakerMockito
+    androidTestImplementation dependency.fabricTest
 
-    testCompile dependency.fabricTest
-    testCompile dependency.mockito
-    testCompile dependency.junit
-    testCompile(dependency.robolectric) {
+    testImplementation dependency.fabricTest
+    testImplementation dependency.mockito
+    testImplementation dependency.junit
+    testImplementation(dependency.robolectric) {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    testCompile (dependency.junitAddons) {
+    testImplementation (dependency.junitAddons) {
         transitive = false
     }
 }

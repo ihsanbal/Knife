@@ -481,6 +481,11 @@ public class DashboardActivity extends CompatBaseActivity implements SwipeRefres
     }
 
     @Override
+    public void onRewardedVideoCompleted() {
+
+    }
+
+    @Override
     public void onRewardedVideoAdLoaded() {
         if (mAd.isLoaded() && !isAdsShow && !BuildConfig.DEBUG) {
             isAdsShow = true;

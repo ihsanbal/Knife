@@ -97,14 +97,14 @@ dependencies {
     androidTestCompile dependency.dexmakerMockito
     androidTestCompile dependency.fabricTest
 
-    testCompile dependency.fabricTest
-    testCompile dependency.mockito
-    testCompile dependency.junit
-    testCompile(dependency.robolectric) {
+    testImplementation dependency.fabricTest
+    testImplementation dependency.mockito
+    testImplementation dependency.junit
+    testImplementation(dependency.robolectric) {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    testCompile (dependency.junitAddons) {
+    testImplementation (dependency.junitAddons) {
         transitive = false
     }
 }

@@ -26,7 +26,7 @@
     <!--XML Fixtures-->
 
     <com.twitter.sdk.android.tweetui.TweetView
-        android:id="@+id/tweet_view"
+        android:id="@+id/tweet_ui_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         twittersdk:tw__tweet_id="1"/>

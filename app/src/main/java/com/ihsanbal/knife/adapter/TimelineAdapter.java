@@ -98,7 +98,7 @@ public class TimelineAdapter extends KRecyclerAdapter<RecyclerView.ViewHolder, T
         @BindView(R.id.user_geo)
         TextView mTextGeo;
 
-        @BindView(R.id.tweet_view)
+        @BindView(R.id.tweet_ui_view)
         TweetView mTweetView;
 
         @BindView(R.id.tw__tweet_author_full_name)

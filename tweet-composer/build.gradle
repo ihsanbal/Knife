@@ -60,17 +60,17 @@ android {
 }
 
 dependencies {
-    compile project(':twitter-core')
+    api project(':twitter-core')
 
-    compile dependency.fabric
-    compile dependency.picasso
-    compile dependency.tweetText
+    api dependency.fabric
+    api dependency.picasso
+    api dependency.tweetText
 
-    testCompile dependency.fabricTest
-    testCompile dependency.mockito
-    testCompile dependency.junit
-    testCompile dependency.retrofitMock
-    testCompile(dependency.robolectric) {
+    testImplementation dependency.fabricTest
+    testImplementation dependency.mockito
+    testImplementation dependency.junit
+    testImplementation dependency.retrofitMock
+    testImplementation(dependency.robolectric) {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }

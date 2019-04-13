@@ -31,7 +31,7 @@
             android:gravity="center_vertical"
             android:textColor="@color/colorAccent"
             android:textSize="17sp"
-            app:font="bold"
+            android:fontFamily="@font/chivo"
             tools:ignore="RtlHardcoded"
             tools:text="Collection (one)" />
 

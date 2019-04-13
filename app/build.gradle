@@ -8,9 +8,9 @@ def buildVersionCode = new Date().format("yyMMddHHmm", TimeZone.getTimeZone("Eur
 def buildVersionName = "1.0.2"
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
     //noinspection GradleDependency
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "28.0.3"
 
     playAccountConfigs {
         defaultAccountConfig {
@@ -22,7 +22,7 @@ android {
         playAccountConfig = playAccountConfigs.defaultAccountConfig
         applicationId "com.ihsanbal.knife"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode buildVersionCode
         versionName buildVersionName
         multiDexEnabled true
@@ -55,11 +55,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
 
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    output.outputFile = new File(output.outputFile.parent,
-                            output.outputFile.name.replace("-release", "-release-" + buildVersionName + "-" + buildVersionCode)
-                    )
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "${variant.name}-release-${buildVersionName}-${buildVersionCode}.apk"
                 }
             }
         }
@@ -69,7 +67,7 @@ android {
             resValue "string", "ad_unit_id_banner", AD_UNIT_ID_BANNER
         }
     }
-
+    flavorDimensions "version"
     productFlavors {
         internal {
             applicationId 'com.ihsanbal.knife.internal'
@@ -108,57 +106,59 @@ play {
 
 dependencies {
 
-    def supportVersion = "25.3.1"
+    def supportVersion = "28.0.0"
     def butterKnifeVersion = "8.5.1"
-    def rxVersion = "2.0.1"
+    def rxVersion = "2.0.2"
     def loggerInterceptorVersion = "2.0.0"
     def paperDBVersion = "2.0"
     def svgVersion = "1.0.2"
-    def firebaseVersion = '10.2.6'
+    def firebaseVersion = '16.0.8'
+    def firebaseVersion3 = '16.2.5'
+    def firebaseVersion2 = '17.2.0'
     def daggerVersion = "2.10-rc2"
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':tweet-ui')
-    compile project(':tweet-composer')
-    compile project(':twitter-core')
-    compile project(':twitter')
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api project(':tweet-ui')
+    api project(':tweet-composer')
+    api project(':twitter-core')
+    api project(':twitter')
 
-    compile "com.google.firebase:firebase-core:$firebaseVersion"
-    compile "com.google.firebase:firebase-ads:$firebaseVersion"
-    compile "com.google.firebase:firebase-perf:$firebaseVersion"
+    api "com.google.firebase:firebase-core:$firebaseVersion"
+    api "com.google.firebase:firebase-ads:$firebaseVersion2"
+    api "com.google.firebase:firebase-perf:$firebaseVersion3"
 
-    compile "com.google.dagger:dagger:$daggerVersion"
+    api "com.google.dagger:dagger:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
 
-    compile "io.reactivex.rxjava2:rxandroid:$rxVersion"
-    compile "io.reactivex.rxjava2:rxjava:$rxVersion"
+    api "io.reactivex.rxjava2:rxandroid:$rxVersion"
+    api "io.reactivex.rxjava2:rxjava:$rxVersion"
 
-    compile "com.android.support:cardview-v7:$supportVersion"
-    compile "com.android.support:appcompat-v7:$supportVersion"
-    compile "com.android.support:design:$supportVersion"
-    compile "com.android.support:customtabs:$supportVersion"
+    api "com.android.support:cardview-v7:$supportVersion"
+    api "com.android.support:appcompat-v7:$supportVersion"
+    api "com.android.support:design:$supportVersion"
+    api "com.android.support:customtabs:$supportVersion"
 
-    compile "io.paperdb:paperdb:$paperDBVersion"
-    compile "com.jrummyapps:animated-svg-view:$svgVersion"
-    compile "com.jakewharton:butterknife:$butterKnifeVersion"
+    api "io.paperdb:paperdb:$paperDBVersion"
+    api "com.jrummyapps:animated-svg-view:$svgVersion"
+    api "com.jakewharton:butterknife:$butterKnifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
-    compile 'com.github.armcha:AutoLinkTextView:0.3.0'
-    compile 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.github.jkwiecien:EasyImage:1.3.1'
-    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+    api 'com.github.armcha:AutoLinkTextView:0.3.0'
+    api 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
+    api 'com.android.support:multidex:1.0.3'
+    api 'com.github.jkwiecien:EasyImage:1.3.1'
+    api 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
 
-    compile('com.crashlytics.sdk.android:answers:1.3.13@aar') {
+    api('com.crashlytics.sdk.android:answers:1.3.13@aar') {
         transitive = true
     }
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    api('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true
     }
-    compile("com.github.ihsanbal:LoggingInterceptor:$loggerInterceptorVersion") {
+    api("com.github.ihsanbal:LoggingInterceptor:$loggerInterceptorVersion") {
         exclude group: 'org.json', module: 'json'
     }
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
 }
 

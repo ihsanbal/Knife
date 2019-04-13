@@ -67,7 +67,7 @@
                 android:textColor="@color/colorEnd"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:font="bold"
+                android:fontFamily="@font/chivo"
                 tools:text="Ricky Minds" />
 
             <android.support.v4.widget.Space
